@@ -7,10 +7,10 @@
   </a>
 </p>
 
-<h1 align="center">WordCraft</h1>
+<h1 align="center">Wordpadx</h1>
 
 <p align="center">
-  <b>Writing and document design; an open-source, clean-room reimplementation of Microsoft Word, rebuilt in pure Rust.</b>
+  <b>Writing and document design; a high-performance open-source word processor rebuilt in pure Rust for Desktop, Web, Android Tablet and iPad.</b>
 </p>
 
 <p align="center">
