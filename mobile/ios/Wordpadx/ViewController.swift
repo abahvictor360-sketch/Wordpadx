@@ -26,6 +26,8 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UIDo
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.navigationDelegate = self
         webView.uiDelegate = self
+        webView.isUserInteractionEnabled = true
+        webView.scrollView.keyboardDismissMode = .none
         webView.scrollView.isScrollEnabled = false // Let egui canvas handle its own scrolling
         webView.scrollView.bounces = false
         webView.isOpaque = false

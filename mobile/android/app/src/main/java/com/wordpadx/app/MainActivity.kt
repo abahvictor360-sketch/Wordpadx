@@ -58,7 +58,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         webView = WebView(this)
+        webView.isFocusable = true
+        webView.isFocusableInTouchMode = true
+        webView.requestFocus(View.FOCUS_DOWN)
         setContentView(webView)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         configureWebView()
         setupAssetLoaderAndLoad()
@@ -77,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         settings.builtInZoomControls = false
         settings.displayZoomControls = false
         settings.mediaPlaybackRequiresUserGesture = false
+        settings.setNeedInitialFocus(true)
         settings.cacheMode = WebSettings.LOAD_DEFAULT
 
         // Optimize for tablet GPU rendering
