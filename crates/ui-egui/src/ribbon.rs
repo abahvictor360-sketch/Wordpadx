@@ -123,37 +123,41 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
         .exact_size(30.0)
         .frame(egui::Frame::NONE.fill(t.tab_strip).inner_margin(egui::Margin { left: 8, right: 10, top: 0, bottom: 0 }))
         .show(ui, |ui| {
-            ui.horizontal_centered(|ui| {
-                ui.spacing_mut().item_spacing = vec2(2.0, 0.0);
-                for (tab, custom) in &tabs {
-                    let (tab, custom) = (tab.as_str(), *custom);
-                    let contextual = !custom && wordcraft_engine::ribbon::CONTEXTUAL_TABS.contains(&tab);
-                    // A custom tab's name is the user's own text: shown as typed.
-                    let shown = if custom { tab } else { tl!(tab) };
-                    let w = ui.ctx().fonts_mut(|f| f.layout_no_wrap(shown.to_string(), medium(12.5), t.text).size().x) + 18.0;
-                    let (r, resp) = ui.allocate_exact_size(vec2(w, 30.0), Sense::click());
-                    if app.ui.keytips == crate::keytips::Phase::Tabs {
-                        crate::keytips::record_tab(r, tab, &mut app.keytip_rects);
-                    }
-                    let active = app.ui.tab == tab && !app.ui.backstage;
-                    if resp.hovered() && !active {
-                        ui.painter().rect_filled(r.shrink2(vec2(0.0, 4.0)), 4.0, t.hover);
-                    }
-                    let color = if contextual || active { t.accent_text } else { t.text };
-                    ui.painter().text(r.center(), Align2::CENTER_CENTER, shown, if active { semibold(12.5) } else { medium(12.5) }, color);
-                    if active {
-                        let u = Rect::from_center_size(pos2(r.center().x, r.max.y - 2.0), vec2(w - 16.0, 3.0));
-                        ui.painter().rect_filled(u, 2.0, t.accent);
-                    }
-                    if resp.clicked() {
-                        let _ = app.run("ui.tab", json!({"tab": tab}));
-                    }
-                    if resp.double_clicked() && tab != "File" {
-                        let _ = app.run("ui.collapseRibbon", json!({}));
-                    }
-                    resp.context_menu(|ui| crate::widgets::customize_menu_items(ui, app));
-                }
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            egui::ScrollArea::horizontal()
+                .id_salt("ribbon_tab_strip")
+                .scroll_bar_visibility(egui::scroll_area::ScrollBarVisibility::AlwaysHidden)
+                .show(ui, |ui| {
+                    ui.horizontal(|ui| {
+                        ui.spacing_mut().item_spacing = vec2(2.0, 0.0);
+                        for (tab, custom) in &tabs {
+                            let (tab, custom) = (tab.as_str(), *custom);
+                            let contextual = !custom && wordcraft_engine::ribbon::CONTEXTUAL_TABS.contains(&tab);
+                            // A custom tab's name is the user's own text: shown as typed.
+                            let shown = if custom { tab } else { tl!(tab) };
+                            let w = ui.ctx().fonts_mut(|f| f.layout_no_wrap(shown.to_string(), medium(12.5), t.text).size().x) + 18.0;
+                            let (r, resp) = ui.allocate_exact_size(vec2(w, 30.0), Sense::click());
+                            if app.ui.keytips == crate::keytips::Phase::Tabs {
+                                crate::keytips::record_tab(r, tab, &mut app.keytip_rects);
+                            }
+                            let active = app.ui.tab == tab && !app.ui.backstage;
+                            if resp.hovered() && !active {
+                                ui.painter().rect_filled(r.shrink2(vec2(0.0, 4.0)), 4.0, t.hover);
+                            }
+                            let color = if contextual || active { t.accent_text } else { t.text };
+                            ui.painter().text(r.center(), Align2::CENTER_CENTER, shown, if active { semibold(12.5) } else { medium(12.5) }, color);
+                            if active {
+                                let u = Rect::from_center_size(pos2(r.center().x, r.max.y - 2.0), vec2(w - 16.0, 3.0));
+                                ui.painter().rect_filled(u, 2.0, t.accent);
+                            }
+                            if resp.clicked() {
+                                let _ = app.run("ui.tab", json!({"tab": tab}));
+                            }
+                            if resp.double_clicked() && tab != "File" {
+                                let _ = app.run("ui.collapseRibbon", json!({}));
+                            }
+                            resp.context_menu(|ui| crate::widgets::customize_menu_items(ui, app));
+                        }
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     // Share, Editing mode, Comments.
                     let share = tl!("Share");
                     let share_w = ui.ctx().fonts_mut(|f| f.layout_no_wrap(share.to_string(), medium(12.0), t.text).size().x);
@@ -192,8 +196,9 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
                     if crate::widgets::icon_text_button(ui, "comment", tl!("Comments"), regular(12.0)).clicked() {
                         let _ = app.run("view.commentsPane", json!({}));
                     }
+                        });
+                    });
                 });
-            });
         });
     if app.ui.ribbon_collapsed {
         return;
