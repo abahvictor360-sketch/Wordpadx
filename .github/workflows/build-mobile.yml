@@ -42,7 +42,7 @@ jobs:
 
       - name: Install Trunk
         run: |
-          if ! command -v trunk &> /dev/null; then
+          if ! command -v trunk >/dev/null 2>&1; then
             cargo install trunk --locked
           fi
 
@@ -113,7 +113,10 @@ jobs:
           path: dist/web
 
       - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_15.4.app || true
+        run: |
+          if [ -d "/Applications/Xcode_15.4.app" ]; then
+            sudo xcode-select -switch /Applications/Xcode_15.4.app
+          fi
 
       - name: Copy Web Bundle into iOS Project
         run: |
@@ -135,8 +138,11 @@ jobs:
         run: |
           cd mobile/ios
           mkdir -p build-output
-          find ~/Library/Developer/Xcode/DerivedData -name "Wordpadx.app" -exec cp -R {} build-output/ \; || true
-          cd build-output && zip -r ../Wordpadx-iPad.zip . || true
+          find ~/Library/Developer/Xcode/DerivedData -name "Wordpadx.app" -exec cp -R {} build-output/ \; 2>/dev/null || true
+          if [ -d build-output ]; then
+            cd build-output
+            zip -r ../Wordpadx-iPad.zip . || true
+          fi
 
       - name: Upload iPad Artifact
         uses: actions/upload-artifact@v4

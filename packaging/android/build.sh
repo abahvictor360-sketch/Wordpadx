@@ -12,8 +12,8 @@ ANDROID_ASSETS="$ANDROID_DIR/app/src/main/assets/www"
 SKIP_WEB=false
 BUILD_TYPE="assembleDebug"
 
-while [[ $# -gt 0 ]]; do
-  case $1 in
+while [ $# -gt 0 ]; do
+  case "$1" in
     --skip-web) SKIP_WEB=true; shift ;;
     --release) BUILD_TYPE="assembleRelease"; shift ;;
     *) shift ;;
@@ -22,7 +22,7 @@ done
 
 echo "==> Building Wordpadx for Android Tablet..."
 
-if [ "$SKIP_WEB" = false ]; then
+if [ "$SKIP_WEB" = "false" ]; then
   echo "--> Building WebAssembly bundle with Trunk..."
   (cd "$WEB_DIR" && trunk build --release)
 fi

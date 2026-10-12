@@ -12,8 +12,8 @@ IOS_WWW="$IOS_DIR/Wordpadx/www"
 SKIP_WEB=false
 CONFIGURATION="Release"
 
-while [[ $# -gt 0 ]]; do
-  case $1 in
+while [ $# -gt 0 ]; do
+  case "$1" in
     --skip-web) SKIP_WEB=true; shift ;;
     --debug) CONFIGURATION="Debug"; shift ;;
     *) shift ;;
@@ -22,7 +22,7 @@ done
 
 echo "==> Building Wordpadx for iPad / iOS..."
 
-if [ "$SKIP_WEB" = false ]; then
+if [ "$SKIP_WEB" = "false" ]; then
   echo "--> Building WebAssembly bundle with Trunk..."
   (cd "$WEB_DIR" && trunk build --release)
 fi
