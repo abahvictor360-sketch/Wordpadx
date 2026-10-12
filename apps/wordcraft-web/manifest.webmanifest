@@ -1,0 +1,30 @@
+{
+  "name": "Wordpadx",
+  "short_name": "Wordpadx",
+  "description": "Word processor for document design, editing, and formatting on tablets, mobile, and desktop.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#2b47b5",
+  "theme_color": "#2b47b5",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "productivity",
+    "utilities",
+    "office"
+  ]
+}
