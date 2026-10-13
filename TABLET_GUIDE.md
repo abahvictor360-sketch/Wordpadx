@@ -41,7 +41,7 @@ A dedicated native Android container with hardware acceleration and deep Android
   ```
   ```bash
   # Linux / macOS
-  ./packaging\android\build.sh
+  ./packaging/android/build.sh
   ```
   Or open `mobile/android` in **Android Studio** and click **Run** or **Build APK**.
 
