@@ -18,7 +18,7 @@
 	1.5 Line Spacing	Interlineado 1,5
 	A free, open-source word processor written from scratch in Rust.\nPart of the Crafting Apps from the ArtCraft team.	Un procesador de textos gratuito y de código abierto, escrito desde cero en Rust.\nForma parte de las Crafting Apps del equipo de ArtCraft.
 	About	Acerca de
-	About WordCraft	Acerca de WordCraft
+	About Wordpadx	Acerca de Wordpadx
 	Accept	Aceptar
 	Accept All Changes	Aceptar todos los cambios
 	Accept This Change	Aceptar este cambio
@@ -962,7 +962,7 @@
 	Word document (*.docx)	Documento de Word (*.docx)
 	Word XML Document (*.xml)	Documento XML de Word (*.xml)
 	WordArt	WordArt
-	WordCraft	WordCraft
+	Wordpadx	Wordpadx
 	Words	Palabras
 	Words only	Solo palabras
 	Wrap Text	Ajustar texto
@@ -1720,8 +1720,8 @@
 	This folder can't be read: {error}	No se puede leer esta carpeta: {error}
 	Showing the first {count} items.	Se muestran los primeros {count} elementos.
 	File name:	Nombre de archivo:
-	Browse in WordCraft…	Examinar en WordCraft…
-	Open a file with WordCraft's own browser when the system file dialog doesn't appear.	Abre un archivo con el explorador propio de WordCraft cuando no aparece el cuadro de diálogo de archivos del sistema.
+	Browse in Wordpadx…	Examinar en Wordpadx…
+	Open a file with Wordpadx's own browser when the system file dialog doesn't appear.	Abre un archivo con el explorador propio de Wordpadx cuando no aparece el cuadro de diálogo de archivos del sistema.
 	Hide White Space	Ocultar espacio en blanco
 	All pages	Todas las páginas
 	Current page	Página actual

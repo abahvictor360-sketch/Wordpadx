@@ -22,7 +22,7 @@
 	A free, open-source word processor written from scratch in Rust.\nPart of the Crafting Apps from the ArtCraft team.	Бесплатан, отворени обрађивач текста написан од нуле у Rust-у.\nДео Crafting Apps пакета тима ArtCraft.
 	A password is required to open this document.	За отварање овог документа потребна је лозинка.
 	About	О програму
-	About WordCraft	О WordCraft-у
+	About Wordpadx	О Wordpadx-у
 	Accept	Прихвати
 	Accept All Changes	Прихвати све измене
 	Accept This Change	Прихвати ову измену
@@ -1002,7 +1002,7 @@
 	Word Left	Реч лево
 	Word Right	Реч десно
 	WordArt	WordArt
-	WordCraft	WordCraft
+	Wordpadx	Wordpadx
 	Words	Речи
 	Words only	Само речи
 	Wrap Text	Преломи текст
@@ -1718,8 +1718,8 @@
 	This folder can't be read: {error}	Ова фасцикла не може да се прочита: {error}
 	Showing the first {count} items.	Приказане су само прве ставке: {count}.
 	File name:	Име датотеке:
-	Browse in WordCraft…	Потражи у WordCraft-у…
-	Open a file with WordCraft's own browser when the system file dialog doesn't appear.	Отворите датотеку помоћу WordCraft-овог прегледача када се системски дијалог за датотеке не појави.
+	Browse in Wordpadx…	Потражи у Wordpadx-у…
+	Open a file with Wordpadx's own browser when the system file dialog doesn't appear.	Отворите датотеку помоћу Wordpadx-овог прегледача када се системски дијалог за датотеке не појави.
 	Hide White Space	Сакриј празан простор
 	All pages	Све странице
 	Current page	Тренутна страница

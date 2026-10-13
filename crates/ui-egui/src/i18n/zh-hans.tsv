@@ -17,7 +17,7 @@
 	1.5 Line Spacing	1.5 倍行距
 	A free, open-source word processor written from scratch in Rust.\nPart of the Crafting Apps from the ArtCraft team.	一款用 Rust 从零编写的免费开源文字处理软件。\n属于 ArtCraft 团队的 Crafting Apps 系列。
 	About	关于
-	About WordCraft	关于 WordCraft
+	About Wordpadx	关于 Wordpadx
 	Accept	接受
 	Accept All Changes	接受所有修订
 	Accept This Change	接受此修订
@@ -950,7 +950,7 @@
 	Word Left	左移一个单词
 	Word Right	右移一个单词
 	WordArt	艺术字
-	WordCraft	WordCraft
+	Wordpadx	Wordpadx
 	Words	字数
 	Words only	仅字词
 	Wrap Text	环绕文字
@@ -1716,8 +1716,8 @@
 	This folder can't be read: {error}	无法读取此文件夹：{error}
 	Showing the first {count} items.	仅显示前 {count} 项。
 	File name:	文件名:
-	Browse in WordCraft…	在 WordCraft 中浏览…
-	Open a file with WordCraft's own browser when the system file dialog doesn't appear.	当系统文件对话框没有出现时，使用 WordCraft 自带的浏览器打开文件。
+	Browse in Wordpadx…	在 Wordpadx 中浏览…
+	Open a file with Wordpadx's own browser when the system file dialog doesn't appear.	当系统文件对话框没有出现时，使用 Wordpadx 自带的浏览器打开文件。
 	Hide White Space	隐藏空白
 	All pages	所有页面
 	Current page	当前页

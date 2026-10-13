@@ -197,6 +197,13 @@ impl FontFace {
         use skrifa::raw::TableProvider;
         self.skrifa().is_some_and(|f| f.gsub().is_ok())
     }
+    /// Does the face's GSUB have rules for OpenType script `tag` (e.g. `b"mym2"`)? A GSUB without
+    /// the script (GNU Unifont has one for other scripts) leaves that script unreordered.
+    pub fn has_script(&self, tag: &[u8; 4]) -> bool {
+        use skrifa::raw::TableProvider;
+        let Some(gsub) = self.skrifa().and_then(|f| f.gsub().ok()) else { return false };
+        gsub.script_list().is_ok_and(|l| l.script_records().iter().any(|r| r.script_tag().to_be_bytes() == *tag))
+    }
     /// Units per em.
     pub fn units_per_em(&self) -> f64 {
         self.upem

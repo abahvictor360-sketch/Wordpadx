@@ -5,7 +5,7 @@
 	1.5 Line Spacing	1.5 行
 	A free, open-source word processor written from scratch in Rust.\nPart of the Crafting Apps from the ArtCraft team.	Rust でゼロから書かれた、無料のオープンソース ワープロです。\nArtCraft チームの Crafting Apps のひとつです。
 	About	情報
-	About WordCraft	WordCraft について
+	About Wordpadx	Wordpadx について
 	Accept	承諾
 	Accept All Changes	すべての変更を承諾
 	Accept This Change	この変更を承諾
@@ -938,7 +938,7 @@
 	Word Left	前の単語へ
 	Word Right	次の単語へ
 	WordArt	ワードアート
-	WordCraft	WordCraft
+	Wordpadx	Wordpadx
 	Words	単語数
 	Words only	単語のみ
 	Wrap Text	文字列の折り返し
@@ -1704,8 +1704,8 @@
 	This folder can't be read: {error}	このフォルダーを読み取れません: {error}
 	Showing the first {count} items.	最初の {count} 項目を表示しています。
 	File name:	ファイル名:
-	Browse in WordCraft…	WordCraft で参照…
-	Open a file with WordCraft's own browser when the system file dialog doesn't appear.	システムのファイル ダイアログが表示されないときに、WordCraft 独自のブラウザーでファイルを開きます。
+	Browse in Wordpadx…	Wordpadx で参照…
+	Open a file with Wordpadx's own browser when the system file dialog doesn't appear.	システムのファイル ダイアログが表示されないときに、Wordpadx 独自のブラウザーでファイルを開きます。
 	Hide White Space	余白を非表示
 	All pages	すべてのページ
 	Current page	現在のページ

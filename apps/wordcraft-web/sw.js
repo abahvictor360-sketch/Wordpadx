@@ -59,8 +59,11 @@ self.addEventListener('fetch', (event) => {
       }).catch(() => {
         // Fallback to cached index.html for navigation requests
         if (event.request.mode === 'navigate') {
-          return caches.match('./') || caches.match('index.html');
+          return caches.match('./')
+            .then((page) => page || caches.match('index.html'))
+            .then((page) => page || Response.error());
         }
+        return Response.error();
       });
     })
   );

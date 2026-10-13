@@ -19,7 +19,7 @@
 	1.5 Line Spacing	1,5 Satır Aralığı
 	A free, open-source word processor written from scratch in Rust.\nPart of the Crafting Apps from the ArtCraft team.	Rust ile sıfırdan yazılmış ücretsiz, açık kaynak bir kelime işlemci.\nArtCraft ekibinin Crafting Apps ailesinin bir parçası.
 	About	Hakkında
-	About WordCraft	WordCraft Hakkında
+	About Wordpadx	Wordpadx Hakkında
 	Accept	Kabul Et
 	Accept All Changes	Tüm Değişiklikleri Kabul Et
 	Accept This Change	Bu Değişikliği Kabul Et
@@ -808,7 +808,7 @@
 	Word Right	Sonraki Sözcük
 	Word document (*.docx)	Word belgesi (*.docx)
 	WordArt	WordArt
-	WordCraft	WordCraft
+	Wordpadx	Wordpadx
 	Words	Sözcükler
 	Words only	Yalnızca sözcükler
 	Wrap Text	Metni Kaydır
@@ -1771,8 +1771,8 @@
 	This folder can't be read: {error}	Bu klasör okunamıyor: {error}
 	Showing the first {count} items.	İlk {count} öğe gösteriliyor.
 	File name:	Dosya adı:
-	Browse in WordCraft…	WordCraft'ta Gözat…
-	Open a file with WordCraft's own browser when the system file dialog doesn't appear.	Sistemin dosya iletişim kutusu açılmadığında dosyayı WordCraft'ın kendi dosya tarayıcısıyla açın.
+	Browse in Wordpadx…	Wordpadx'ta Gözat…
+	Open a file with Wordpadx's own browser when the system file dialog doesn't appear.	Sistemin dosya iletişim kutusu açılmadığında dosyayı Wordpadx'ın kendi dosya tarayıcısıyla açın.
 	Hide White Space	Boşluğu gizle
 	All pages	Tüm sayfalar
 	Current page	Geçerli sayfa
