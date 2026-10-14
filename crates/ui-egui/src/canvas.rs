@@ -316,6 +316,14 @@ fn place_pages(sizes: &[(f32, f32)], markup: f32, scale: f32, cols: usize, avail
     (rects, vec2(content_w, y.max(avail.y)))
 }
 
+/// The width Web Layout wraps text to, in points, for a canvas `avail_w` pixels wide shown at
+/// `scale` pixels per point: the canvas less the scroll bar and the gaps beside the page, in whole
+/// points so a fraction of a pixel doesn't lay the document out again.
+fn web_width(avail_w: f32, scale: f32) -> f32 {
+    let w = (avail_w - 14.0 - 2.0 * GAP) / scale.max(0.01);
+    if w.is_finite() { w.floor().clamp(144.0, 10_000.0) } else { 800.0 }
+}
+
 pub fn geometry(app: &WordApp, l: &DocLayout, avail: egui::Vec2) -> Geometry {
     let v = &app.session.view;
     let markup = markup_width(app);
@@ -465,13 +473,19 @@ fn drawing_grid_step(spacing: f32, scale: f32) -> f32 {
 pub fn show(app: &mut WordApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
     crate::ink::replay_tick(app, ui.ctx());
+    // Web Layout (and Outline) wraps text to the window, as in Word.
+    if app.session.view.mode != wordcraft_layout::ViewMode::Print {
+        let scale = PX_PER_PT * app.session.view.zoom.clamp(0.1, 5.0);
+        app.session.view.web_width = web_width(ui.available_width(), scale);
+    }
     let layout = app.session.layout();
     // View › Switch Modes: dark paper, inverted document colours, a white caret.
     let dark_page = app.session.view.dark_mode;
     let caret_color = if dark_page { Color32::WHITE } else { t.caret };
     let dark_paper = wordcraft_render::DARK_PAPER;
     let full = ui.available_rect_before_wrap();
-    let show_ruler = app.session.view.ruler && app.session.view.mode == wordcraft_layout::ViewMode::Print && !app.session.view.read_mode;
+    let show_ruler =
+        app.session.view.ruler && app.session.view.mode == wordcraft_layout::ViewMode::Print && !app.session.view.read_mode && !app.phone;
     let (hruler, vruler, area) = if show_ruler {
         let h = Rect::from_min_max(pos2(full.min.x + RULER, full.min.y), pos2(full.max.x, full.min.y + RULER));
         let v = Rect::from_min_max(pos2(full.min.x, full.min.y + RULER), pos2(full.min.x + RULER, full.max.y));
@@ -2114,6 +2128,18 @@ fn is_followable_link(url: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Web Layout wraps to the canvas less the scroll bar and gaps, in whole points, and stays
+    /// sane for degenerate sizes.
+    #[test]
+    fn web_width_follows_the_canvas() {
+        assert_eq!(web_width(390.0 + 14.0 + 2.0 * GAP, 1.0), 390.0);
+        assert_eq!(web_width(800.5 + 14.0 + 2.0 * GAP, 2.0), 400.0);
+        assert_eq!(web_width(10.0, 1.0), 144.0);
+        assert_eq!(web_width(f32::NAN, 1.0), 800.0);
+        assert_eq!(web_width(1e9, 1.0), 10_000.0);
+        assert_eq!(web_width(500.0, 0.0), 10_000.0);
+    }
 
     /// #167: dragging a ruler's margin edge sets that margin, snapped, never negative, and
     /// always leaving an inch of text.
