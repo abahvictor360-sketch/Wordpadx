@@ -1,5 +1,5 @@
 // Wordpadx PWA Service Worker for offline and cached execution on iPad and Android Tablets
-const CACHE_NAME = 'wordpadx-cache-v1';
+const CACHE_NAME = 'wordpadx-app-v2';
 const ASSETS_TO_CACHE = [
   './',
   'index.html',
