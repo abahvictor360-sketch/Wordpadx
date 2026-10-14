@@ -5,18 +5,18 @@
 <h1 align="center">Wordpadx</h1>
 
 <p align="center">
-  <b>Write, design and share documents on your tablet, in the browser and on the desktop.</b>
+  <b>Write, design and share documents on your phone, your tablet, in the browser and on the desktop.</b>
 </p>
 
 <p align="center">
   Wordpadx is a fast, private, open-source word processor written in Rust. It has the ribbon,
   styles, tables, track changes, references and mail merge you already know, opens and saves
-  .docx, and works offline on Android tablets, iPad, the web, macOS, Windows, Linux and BSD.
+  .docx, and works offline on Android phones and tablets, iPhone, iPad, the web, macOS, Windows, Linux and BSD.
 </p>
 
 <p align="center">
   <img alt="Written in Rust" src="https://img.shields.io/badge/written%20in-Rust-2f54eb?style=flat-square&logo=rust&logoColor=white">
-  <img alt="Runs on Android tablet, iPad, web and desktop" src="https://img.shields.io/badge/runs%20on-Android%20%C2%B7%20iPad%20%C2%B7%20Web%20%C2%B7%20Desktop-f5a524?style=flat-square">
+  <img alt="Runs on Android, iPhone, iPad, web and desktop" src="https://img.shields.io/badge/runs%20on-Android%20%C2%B7%20iPhone%20%C2%B7%20iPad%20%C2%B7%20Web%20%C2%B7%20Desktop-f5a524?style=flat-square">
   <img alt="License: MIT OR Apache-2.0" src="https://img.shields.io/badge/license-MIT%20%2F%20Apache--2.0-2f54eb?style=flat-square">
 </p>
 
@@ -48,9 +48,9 @@
 
 | Device | How to install | Notes |
 |---|---|---|
-| **Android tablet** | Download `app-debug.apk` from the [latest release](https://github.com/abahvictor360-sketch/Wordpadx/releases/latest) | Debug-signed: allow installs from unknown sources. Opens .docx, .odt and .txt; exports go to Downloads. Works with Samsung DeX, split screen and a stylus. |
-| **iPad** | Install the web app (below), or download `Wordpadx-iPad.zip` from the [latest release](https://github.com/abahvictor360-sketch/Wordpadx/releases/latest) | The zip is unsigned and must be signed before it installs; building it in Xcode is simpler. Supports Split View, Stage Manager and Apple Pencil. |
-| **Any tablet browser** | Open the [web app](https://abahvictor360-sketch.github.io/Wordpadx/app/), then Safari → Share → *Add to Home Screen*, or Chrome → ⋮ → *Install app* | Needs WebGPU or WebGL2. Runs full screen and keeps working offline once loaded. |
+| **Android phone or tablet** | Download `app-debug.apk` from the [latest release](https://github.com/abahvictor360-sketch/Wordpadx/releases/latest) | Debug-signed: allow installs from unknown sources. Opens .docx, .odt and .txt; exports go to Downloads. Works with Samsung DeX, split screen and a stylus. |
+| **iPhone or iPad** | Install the web app (below), or download `Wordpadx-iPad.zip` (it runs on both) from the [latest release](https://github.com/abahvictor360-sketch/Wordpadx/releases/latest) | The zip is unsigned and must be signed before it installs; building it in Xcode is simpler. Supports Split View, Stage Manager and Apple Pencil. |
+| **Any phone or tablet browser** | Open the [web app](https://abahvictor360-sketch.github.io/Wordpadx/app/), then Safari → Share → *Add to Home Screen*, or Chrome → ⋮ → *Install app* | Needs WebGPU or WebGL2. Runs full screen and keeps working offline once loaded. |
 | **macOS, Windows, Linux, BSD** | [Build from source](#build-from-source) | Native app on the GPU. |
 
 Every push to `main` builds the web app, the Android APK and the iPad app
@@ -64,8 +64,10 @@ under `/app/`, and publishes each successful build as a `v0.5.0-build.N` prerele
   F4 repeats, F7 checks spelling.
 - **Your files.** Opens and saves .docx, .odt, .rtf, .html, .md, .tex and .txt; opens Word 97-2003
   .doc; exports PDF with selectable text, links and bookmarks.
-- **Made for tablets.** A native Android app, an iPad app and an installable web app from the same
-  build. The ribbon's tab strip scrolls on narrow screens, and the keyboard opens when you tap the page.
+- **Made for phones and tablets.** A native Android app, an iPhone and iPad app and an installable web
+  app from the same build. On a phone, in portrait or on its side, the text wraps to the screen (Web
+  Layout), the rulers hide and the title and status bars shrink; the ribbon's tab strip scrolls, and
+  the keyboard opens when you tap the page.
 - **Fast.** Layout is cached per paragraph, so typing in a 188-page document re-lays it out in
   about 1.4 ms.
 - **Private.** Spelling, grammar and everything else run on your device. No account, no tracking.
@@ -186,7 +188,7 @@ browser or try Chrome or Safari.
 | L5 | `wordcraft-mcp` | MCP server |
 | L6 | `wordcraft-ui-egui` | the user interface |
 | apps | `apps/wordcraft`, `apps/wordcraft-cli`, `apps/wordcraft-web` | desktop, command line, web app |
-| mobile | `mobile/android`, `mobile/ios` | Android tablet and iPad apps that host the web build |
+| mobile | `mobile/android`, `mobile/ios` | Android and iOS (iPhone and iPad) apps that host the web build |
 | website | `website/` | the landing page |
 
 ## Status

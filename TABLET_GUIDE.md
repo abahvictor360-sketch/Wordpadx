@@ -1,6 +1,8 @@
-# Wordpadx for Android Tablet & iPad
+# Wordpadx for Android & iOS (phones and tablets)
 
-Wordpadx brings full-featured word processing and document design to tablets (Android tablets and iPad), running natively on the GPU via WebGPU and WebGL2.
+Wordpadx brings full-featured word processing and document design to tablets and phones (Android phones and tablets, iPhone and iPad), running natively on the GPU via WebGPU and WebGL2.
+
+**On a phone** the same app, APK and iOS build switch to a phone layout whenever the window is narrower than 560 pt (portrait) or shorter than 480 pt (landscape): the document wraps to the screen in Web Layout, the rulers hide, and the title and status bars keep only Save, Undo, Redo, search, the page count and the view and zoom buttons. Rotating to a wider window, or switching to Print Layout from the status bar, gives you pages again. Install the web app the same way as on a tablet (Safari → Share → Add to Home Screen on iPhone, ⋮ → Install app on Android).
 
 ---
 

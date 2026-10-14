@@ -265,6 +265,13 @@ impl UiState {
     }
 }
 
+/// Windows narrower than this (in points) get the phone layout: a portrait phone is about
+/// 360–430 pt wide; the smallest tablets in portrait are 600 pt or more.
+pub const PHONE_MAX_WIDTH: f32 = 560.0;
+/// Windows shorter than this (in points) get the phone layout too: a phone on its side is about
+/// 375–430 pt tall, which leaves little room for the page under the full ribbon and rulers.
+pub const PHONE_MAX_HEIGHT: f32 = 480.0;
+
 /// The application.
 pub struct WordApp {
     pub session: Session,
@@ -309,6 +316,15 @@ pub struct WordApp {
     /// File ▸ Options: load the installed CJK fallback font if no embedded face covers it.
     pub(crate) want_system_cjk: bool,
     fonts_frames: u32,
+    /// The window is phone-sized ([`PHONE_MAX_WIDTH`], [`PHONE_MAX_HEIGHT`]): compact chrome, no
+    /// rulers, text wrapped to the screen.
+    pub(crate) phone: bool,
+    /// The phone layout switched Print Layout to Web Layout so text wraps to the screen; leaving
+    /// the phone layout (a wider window, a rotated tablet) switches back.
+    phone_reflowed: bool,
+    /// The page didn't fit across the window at 100%, so the canvas zoomed it to Page Width; once
+    /// it fits again the canvas goes back to 100% ([`canvas`]).
+    pub(crate) page_auto_fit: bool,
     /// The interface theme setting last installed in egui ([`theme::apply`]).
     applied_theme: Option<theme::Appearance>,
     /// What the system last said about its animation effects ([`Services::animations_enabled`]).
@@ -396,6 +412,9 @@ impl WordApp {
             fonts_system_cjk: false,
             want_system_cjk: false,
             fonts_frames: 0,
+            phone: false,
+            phone_reflowed: false,
+            page_auto_fit: false,
             applied_theme: None,
             system_animations: None,
             applied_animations: None,
@@ -1281,6 +1300,7 @@ impl WordApp {
             ctx.request_repaint();
             return;
         }
+        self.phone_layout(ctx.content_rect().size());
         let t = theme::Tokens::get(&ctx);
         // Keytips are read before layout so the frame paints the new state; badges paint after
         // the ribbon so they sit on top of it.
@@ -1316,6 +1336,23 @@ impl WordApp {
         self.frame_ms = now_ms() - t0;
         // Typing and formatting land here, after `logic` has reported.
         self.report_dirty();
+    }
+
+    /// Enter or leave the phone layout for a window of `size` points. On a phone, Print Layout
+    /// pages are too wide to read at 100% and too small to edit when fitted, so the document
+    /// switches to Web Layout, which wraps text to the screen, as Word's phone apps do.
+    fn phone_layout(&mut self, size: egui::Vec2) {
+        let phone = size.x < PHONE_MAX_WIDTH || size.y < PHONE_MAX_HEIGHT;
+        if phone == self.phone {
+            return;
+        }
+        self.phone = phone;
+        let v = &self.session.view;
+        if phone && v.mode == wordcraft_layout::ViewMode::Print && !v.read_mode {
+            self.phone_reflowed = self.run("view.webLayout", json!({})).is_ok();
+        } else if !phone && std::mem::take(&mut self.phone_reflowed) && v.mode == wordcraft_layout::ViewMode::Web {
+            let _ = self.run("view.printLayout", json!({}));
+        }
     }
 
     /// Files that arrived asynchronously (web picker, drops): documents open, pictures insert,
@@ -2263,6 +2300,57 @@ mod tests {
         assert!(a.quit_requested);
         assert!(a.close_requested(), "the close that follows goes ahead");
         assert!(body_text(&a).contains(UNSAVED), "nothing was replaced on the way out");
+    }
+
+    /// A page too wide for the window at 100% zooms to Page Width and back to 100% when the window
+    /// widens again; a zoom the user picked stays.
+    #[test]
+    fn page_zooms_to_fit_narrow_windows() {
+        let mut a = app();
+        let l = a.session.layout();
+        canvas::auto_fit_page(&mut a, &l, 1400.0);
+        assert!(a.session.view.fit.is_empty(), "fits at 100%");
+        canvas::auto_fit_page(&mut a, &l, 700.0);
+        assert_eq!(a.session.view.fit, "pageWidth");
+        canvas::auto_fit_page(&mut a, &l, 700.0);
+        assert_eq!(a.session.view.fit, "pageWidth", "stays fitted");
+        canvas::auto_fit_page(&mut a, &l, 1400.0);
+        assert!(a.session.view.fit.is_empty());
+        assert!((a.session.view.zoom - 1.0).abs() < 1e-6, "back to 100%");
+        a.run("view.zoom", json!({"value": 120})).unwrap();
+        canvas::auto_fit_page(&mut a, &l, 700.0);
+        assert!(a.session.view.fit.is_empty(), "the user's zoom stays");
+        assert!((a.session.view.zoom - 1.2).abs() < 1e-6);
+        assert!(!a.session.dirty);
+    }
+
+    /// A phone-sized window (portrait or on its side) wraps text to the screen in Web Layout and
+    /// goes back to Print Layout when the window grows; a view the user chose is left alone.
+    #[test]
+    fn phone_layout_reflows_and_restores() {
+        use wordcraft_layout::ViewMode;
+        let mut a = app();
+        a.phone_layout(egui::vec2(1440.0, 900.0));
+        assert!(!a.phone);
+        assert_eq!(a.session.view.mode, ViewMode::Print);
+        for size in [egui::vec2(390.0, 844.0), egui::vec2(844.0, 390.0)] {
+            a.phone_layout(size);
+            assert!(a.phone, "{size:?} is a phone");
+            assert_eq!(a.session.view.mode, ViewMode::Web, "{size:?}");
+            a.phone_layout(egui::vec2(1024.0, 768.0));
+            assert!(!a.phone);
+            assert_eq!(a.session.view.mode, ViewMode::Print, "back to Print Layout after {size:?}");
+        }
+        assert!(!a.session.dirty, "switching layouts doesn't edit the document");
+        // Read Mode stays on a phone; Web Layout the user picked stays on a tablet.
+        a.run("view.readMode", json!({})).unwrap();
+        a.phone_layout(egui::vec2(390.0, 844.0));
+        assert!(a.session.view.read_mode);
+        a.phone_layout(egui::vec2(1024.0, 768.0));
+        a.run("view.webLayout", json!({})).unwrap();
+        a.phone_layout(egui::vec2(390.0, 844.0));
+        a.phone_layout(egui::vec2(1024.0, 768.0));
+        assert_eq!(a.session.view.mode, ViewMode::Web, "the user's Web Layout stays");
     }
 
     /// Enter activates the focused prompt button; it means Save only when no button has focus.

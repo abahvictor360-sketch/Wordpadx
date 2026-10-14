@@ -1,6 +1,6 @@
 # UI parity with Microsoft Word
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-11 · **Change:** trivial (table borders and the resize handle drag on the page, #217; previously major: first version; ribbon, dialogs, shortcuts and on-canvas interaction measured from `crates/ui-egui` and the command registry) · **Target:** Microsoft Word (Microsoft 365) for Mac 16.113.4
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-14 · **Change:** trivial (phone layout; Web Layout wraps to the window; previously: table borders and the resize handle drag on the page, #217; previously major: first version; ribbon, dialogs, shortcuts and on-canvas interaction measured from `crates/ui-egui` and the command registry) · **Target:** Microsoft Word (Microsoft 365) for Mac 16.113.4
 
 How WordCraft looks and feels next to Word: ribbon, dialogs, panes, keyboard, mouse and touch.
 Typing behaviour has its own checklist ([`typing-parity.md`](typing-parity.md)). All assets are our
@@ -92,3 +92,5 @@ own (`AGENTS.md`: no Microsoft iconography, ever).
 | 2026-10-10 | major | First version: ribbon, dialog, shortcut and interaction inventory |
 | 2026-10-10 | trivial | Draw tab tools and Review › Hide Ink (#307) |
 | 2026-10-11 | trivial | Draw: Lasso, Add Pen gallery, Ink to Shape and Ink Replay (#395) |
+| 2026-10-14 | trivial | Phone layout (Web Layout, no rulers, compact title and status bars) below 560 × 480 pt; Web Layout wraps to the window as in Word |
+| 2026-10-14 | trivial | Responsive tab strip actions, automatic Page Width on narrow windows, status bar items drop by width |

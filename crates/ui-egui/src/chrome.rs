@@ -125,35 +125,39 @@ pub fn title_bar(app: &mut WordApp, ui: &mut Ui) {
                 ui.spacing_mut().item_spacing = vec2(2.0, 0.0);
                 // AutoSave switch: greyed out, with the reason as its tooltip, when AutoSave can't
                 // cover the document (#196, #176); clicking it then offers Save As where that helps.
+                let phone = app.phone;
                 let block = app.autosave_block();
                 let on = app.autosaves();
                 let label = if block.is_some() { t.text_dim.gamma_multiply(0.6) } else { t.text_dim };
-                ui.label(egui::RichText::new(tl!("AutoSave")).font(regular(11.5)).color(label));
-                let (r, resp) = ui.allocate_exact_size(vec2(30.0, 16.0), Sense::click());
-                let (fill, stroke, knob_fill) = match (&block, on) {
-                    (Some(_), _) => (t.input.gamma_multiply(0.5), t.border.gamma_multiply(0.7), t.text_dim.gamma_multiply(0.45)),
-                    (None, true) => (t.accent, t.accent, t.on_accent),
-                    (None, false) => (t.input, t.border_strong, t.text_dim),
-                };
-                ui.painter().rect(r, 8.0, fill, Stroke::new(1.0, stroke), egui::StrokeKind::Inside);
-                let knob = if on { r.max.x - 8.0 } else { r.min.x + 8.0 };
-                ui.painter().circle_filled(pos2(knob, r.center().y), 5.0, knob_fill);
-                let tip = block
-                    .as_ref()
-                    .map_or_else(|| tl!("AutoSave saves every change to the file (needs a saved document)").to_string(), |b| b.reason());
-                if resp.on_hover_text(tip).clicked() {
-                    match block {
-                        None => {
-                            let _ = app.run("file.autosave", json!({}));
+                // A phone's title bar has room for the Quick Access Toolbar, search and account only.
+                if !phone {
+                    ui.label(egui::RichText::new(tl!("AutoSave")).font(regular(11.5)).color(label));
+                    let (r, resp) = ui.allocate_exact_size(vec2(30.0, 16.0), Sense::click());
+                    let (fill, stroke, knob_fill) = match (&block, on) {
+                        (Some(_), _) => (t.input.gamma_multiply(0.5), t.border.gamma_multiply(0.7), t.text_dim.gamma_multiply(0.45)),
+                        (None, true) => (t.accent, t.accent, t.on_accent),
+                        (None, false) => (t.input, t.border_strong, t.text_dim),
+                    };
+                    ui.painter().rect(r, 8.0, fill, Stroke::new(1.0, stroke), egui::StrokeKind::Inside);
+                    let knob = if on { r.max.x - 8.0 } else { r.min.x + 8.0 };
+                    ui.painter().circle_filled(pos2(knob, r.center().y), 5.0, knob_fill);
+                    let tip = block
+                        .as_ref()
+                        .map_or_else(|| tl!("AutoSave saves every change to the file (needs a saved document)").to_string(), |b| b.reason());
+                    if resp.on_hover_text(tip).clicked() {
+                        match block {
+                            None => {
+                                let _ = app.run("file.autosave", json!({}));
+                            }
+                            // AutoSave comes on once Save As has saved (maybe on a later frame, #94).
+                            Some(b) if b.save_as_helps() => {
+                                let _ = app.save_as(crate::file_dialogs::AfterSave::AutoSave);
+                            }
+                            Some(b) => app.status(b.reason()),
                         }
-                        // AutoSave comes on once Save As has saved (maybe on a later frame, #94).
-                        Some(b) if b.save_as_helps() => {
-                            let _ = app.save_as(crate::file_dialogs::AfterSave::AutoSave);
-                        }
-                        Some(b) => app.status(b.reason()),
                     }
+                    ui.add_space(8.0);
                 }
-                ui.add_space(8.0);
                 quick_access(ui, app);
                 qat_end = ui.min_rect().max.x;
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -165,11 +169,11 @@ pub fn title_bar(app: &mut WordApp, ui: &mut Ui) {
                     resp.on_hover_text(format!("{} — set your name in File › Options", app.session.author));
                     ui.add_space(8.0);
                     // Search ("Tell me").
-                    let (r, resp) = ui.allocate_exact_size(vec2(260.0, control_h), Sense::click());
+                    let (r, resp) = ui.allocate_exact_size(vec2(if phone { control_h + 8.0 } else { 260.0 }, control_h), Sense::click());
                     ui.painter().rect(r, 6.0, if resp.hovered() { t.input } else { t.ribbon }, Stroke::new(1.0, t.border), egui::StrokeKind::Inside);
                     icons::paint(
                         ui.painter(),
-                        Rect::from_center_size(pos2(r.min.x + 16.0, r.center().y), vec2(16.0, 16.0)),
+                        Rect::from_center_size(if phone { r.center() } else { pos2(r.min.x + 16.0, r.center().y) }, vec2(16.0, 16.0)),
                         "search",
                         t.text_dim,
                         t.accent,
@@ -177,15 +181,18 @@ pub fn title_bar(app: &mut WordApp, ui: &mut Ui) {
                     let ph = tl!("Search commands and help");
                     let pfont = TypeRung::Control.regular();
                     let ptrack = TypeRung::Control.tracking();
-                    paint_text(
-                        ui.painter(),
-                        pos2(r.min.x + 30.0, r.center().y - TypeRung::Control.line_height() / 2.0),
-                        Align2::LEFT_TOP,
-                        ph,
-                        &pfont,
-                        ptrack,
-                        t.text_dim,
-                    );
+                    let resp = if phone { resp.on_hover_text(ph) } else { resp };
+                    if !phone {
+                        paint_text(
+                            ui.painter(),
+                            pos2(r.min.x + 30.0, r.center().y - TypeRung::Control.line_height() / 2.0),
+                            Align2::LEFT_TOP,
+                            ph,
+                            &pfont,
+                            ptrack,
+                            t.text_dim,
+                        );
+                    }
                     if resp.clicked() {
                         let _ = app.run("ui.dialog", json!({"name": "commands"}));
                     }
@@ -222,6 +229,11 @@ pub fn title_bar(app: &mut WordApp, ui: &mut Ui) {
         });
 }
 
+/// Status bars narrower than this (points) leave out the language.
+const STATUS_LANGUAGE_WIDTH: f32 = 760.0;
+/// Status bars narrower than this (points) also leave out the zoom slider and Focus.
+const STATUS_SLIDER_WIDTH: f32 = 640.0;
+
 pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
     egui::Panel::bottom("status")
@@ -251,7 +263,11 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                 {
                     let _ = app.run("ui.dialog", json!({"name": "goto"}));
                 }
-                let words = app.cached_word_count();
+                let phone = app.phone;
+                // Narrower windows drop the language, then the zoom slider and Focus.
+                let width = ui.max_rect().width();
+                let (language, slider) = (!phone && width >= STATUS_LANGUAGE_WIDTH, !phone && width >= STATUS_SLIDER_WIDTH);
+                let words = if phone { 0 } else { app.cached_word_count() };
                 // A selected picture/shape/text box isn't a text selection: show the total.
                 let wtxt = if app.session.sel.is_collapsed() || crate::objects::selected(app).is_some() {
                     crate::i18n::fmt(tl!("{words} words"), &[("words", &words.to_string())])
@@ -259,20 +275,24 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                     let sw = wordcraft_doc::count_words(&app.session.selected_text());
                     crate::i18n::fmt(tl!("{selected} of {words} words"), &[("selected", &sw.to_string()), ("words", &words.to_string())])
                 };
-                if st(ui, &wtxt).clicked() {
+                // A phone has room for the page count and the view and zoom buttons only.
+                if !phone && st(ui, &wtxt).clicked() {
                     let _ = app.run("ui.dialog", json!({"name": "wordCount"}));
                 }
-                if app.session.sel.focus.story != StoryRef::Body && !crate::canvas::in_text_box(app) {
+                if !phone && app.session.sel.focus.story != StoryRef::Body && !crate::canvas::in_text_box(app) {
                     st(ui, tl!("Editing header/footer"));
                 }
-                st(ui, tl!("English (United States)"));
-                if app.session.doc.settings.track_changes {
+                if language {
+                    st(ui, tl!("English (United States)"));
+                }
+                if !phone && app.session.doc.settings.track_changes {
                     st(ui, tl!("Track Changes: On"));
                 }
-                if app.session.prefs.overtype && st(ui, tl!("Overtype")).on_hover_text(tl!("Click to switch back to inserting")).clicked() {
+                if !phone && app.session.prefs.overtype && st(ui, tl!("Overtype")).on_hover_text(tl!("Click to switch back to inserting")).clicked() {
                     let _ = app.run("text.overtype", json!({"value": false}));
                 }
                 if let Some((msg, at)) = &app.status_msg
+                    && !phone
                     && crate::now_ms() - at < 6000.0
                 {
                     let font = TypeRung::Caption.regular();
@@ -296,11 +316,13 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                         let _ = app.run("view.zoomIn", json!({}));
                     }
                     // Zoom slider (10%–500%, 100% in the middle).
-                    let mut v = app.canvas.scale / crate::canvas::PX_PER_PT;
-                    let slider = egui::Slider::new(&mut v, 0.1..=5.0).logarithmic(true).show_value(false);
-                    ui.spacing_mut().slider_width = 110.0;
-                    if ui.add(slider).changed() {
-                        let _ = app.run("view.zoom", json!({"value": (v * 100.0).round()}));
+                    if slider {
+                        let mut v = app.canvas.scale / crate::canvas::PX_PER_PT;
+                        let slider = egui::Slider::new(&mut v, 0.1..=5.0).logarithmic(true).show_value(false);
+                        ui.spacing_mut().slider_width = 110.0;
+                        if ui.add(slider).changed() {
+                            let _ = app.run("view.zoom", json!({"value": (v * 100.0).round()}));
+                        }
                     }
                     if small_icon(ui, "minus", tl!("Zoom Out")) {
                         let _ = app.run("view.zoomOut", json!({}));
@@ -323,6 +345,9 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                         if resp.on_hover_text(id.trim_start_matches("view.")).clicked() {
                             let _ = app.run(id, json!({}));
                         }
+                    }
+                    if !slider {
+                        return;
                     }
                     ui.add_space(8.0);
                     let focus = tl!("Focus");
