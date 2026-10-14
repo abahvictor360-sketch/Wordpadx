@@ -3,118 +3,283 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wordpadx — Your words, beautifully made</title>
-  <meta name="description" content="Wordpadx is a fast, private, open-source word processor for Android, iPhone, iPad, desktop, and the web.">
+  <title>Wordpadx — Write, design and share on any device</title>
+  <meta name="description" content="Wordpadx is a fast, private, open-source word processor written in Rust for Android tablets, iPad, the web and the desktop. Opens and saves .docx.">
+  <meta name="theme-color" content="#2f54eb">
   <link rel="icon" type="image/svg+xml" href="assets/icons/app-icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    try { var t = localStorage.getItem('wpx-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
 </head>
 <body>
-  <div class="page-glow page-glow--top"></div>
-  <div class="page-glow page-glow--bottom"></div>
-
-  <header class="site-header">
-    <nav class="nav shell" aria-label="Main navigation">
-      <a class="brand" href="#" aria-label="Wordpadx home">
-        <img src="assets/icons/app-icon.png" alt="" class="brand-mark">
-        <span>Wordpadx</span>
-      </a>
-      <div class="nav-links" id="navLinks">
-        <a href="#features">Features</a>
-        <a href="#preview">Preview</a>
-        <a href="#downloads">Downloads</a>
-        <a class="nav-github" href="https://github.com/abahvictor360-sketch/Wordpadx" target="_blank" rel="noopener">GitHub <span>↗</span></a>
-      </div>
-      <a href="#downloads" class="button button--dark button--small nav-cta">Get Wordpadx <span>↗</span></a>
-      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open navigation">
-        <span></span><span></span><span></span>
-      </button>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero shell">
-      <div class="hero-copy reveal">
-        <div class="eyebrow"><span class="eyebrow-dot"></span> A calmer way to create</div>
-        <h1>Make space for<br><em>better words.</em></h1>
-        <p class="hero-lede">Wordpadx is a fast, private word processor designed for ideas in motion. Write, edit, and share beautiful documents wherever inspiration finds you.</p>
-        <div class="hero-actions">
-          <a class="button button--dark" href="#downloads">Download Wordpadx <span>↓</span></a>
-          <a class="text-link" href="#preview">See how it works <span>→</span></a>
+  <div class="frame">
+    <header class="site-header">
+      <nav class="nav" aria-label="Main navigation">
+        <a class="brand" href="#top" aria-label="Wordpadx home">
+          <img src="assets/icons/app-icon.svg" alt="" class="brand-mark" width="28" height="28">
+          <span>Wordpadx</span>
+        </a>
+        <div class="nav-links" id="navLinks">
+          <a href="#features">Features</a>
+          <a href="#tour">Tour</a>
+          <a href="#platforms">Platforms</a>
+          <a href="https://github.com/abahvictor360-sketch/Wordpadx" target="_blank" rel="noopener">GitHub</a>
         </div>
-        <div class="hero-note"><span class="note-check">✓</span> Free forever · Open source · No account required</div>
-      </div>
-      <div class="hero-art reveal reveal--late" aria-label="Wordpadx document preview">
-        <div class="art-orbit art-orbit--one"></div>
-        <div class="art-orbit art-orbit--two"></div>
-        <div class="floating-note floating-note--top"><span class="mini-icon mini-icon--green">✦</span><div><strong>Made for focus</strong><small>Distraction-free writing</small></div></div>
-        <div class="floating-note floating-note--bottom"><span class="mini-icon mini-icon--blue">⌁</span><div><strong>Works offline</strong><small>Your files stay yours</small></div></div>
-        <div class="tablet">
-          <div class="tablet-notch"></div>
-          <div class="tablet-screen">
-            <div class="tablet-status"><span>9:41</span><span>▮▮▮ ◉</span></div>
-            <div class="tablet-toolbar"><span>‹</span><span class="toolbar-title">My documents</span><span>＋</span></div>
-            <div class="doc-card doc-card--mint"><span class="doc-type">W</span><strong>Morning thoughts</strong><small>Edited just now · 4 pages</small><span class="doc-arrow">→</span></div>
-            <div class="doc-card doc-card--lavender"><span class="doc-type">W</span><strong>Project outline</strong><small>Edited yesterday · 12 pages</small><span class="doc-arrow">→</span></div>
-            <div class="doc-card doc-card--cream"><span class="doc-type">W</span><strong>Travel notes</strong><small>Edited 3 days ago · 2 pages</small><span class="doc-arrow">→</span></div>
-            <div class="tablet-bottom"><span class="active">⌂<small>Home</small></span><span>▤<small>Files</small></span><span>⚙<small>Settings</small></span></div>
+        <div class="nav-actions">
+          <a class="btn btn--primary btn--sm" href="#platforms">Get Wordpadx</a>
+          <a class="btn btn--ghost btn--sm" href="https://github.com/abahvictor360-sketch/Wordpadx" target="_blank" rel="noopener">Star on GitHub</a>
+        </div>
+        <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open navigation">
+          <span></span><span></span><span></span>
+        </button>
+      </nav>
+    </header>
+
+    <main id="top">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-copy reveal">
+          <h1>Write, Design and Share with <span class="accent-blue">Word</span><span class="accent-orange">padx</span></h1>
+          <p class="lede">A fast, private word processor with the ribbon, styles, tables and track changes you already know. It opens and saves .docx, works offline, and runs on your tablet, in the browser and on the desktop.</p>
+          <div class="hero-actions">
+            <a class="btn btn--primary" href="#platforms">Download free</a>
+            <a class="btn btn--ghost" href="#tour">Take the tour</a>
           </div>
         </div>
+
+        <div class="hero-stage reveal reveal--late">
+          <div class="hero-card" aria-hidden="true"></div>
+          <div class="device device--hero">
+            <div class="device-screen">
+              <img src="assets/images/hero.png" alt="Wordpadx with the Home tab of the ribbon open over a two-page sample document, the Navigation pane on the left and the Styles gallery above" width="1440" height="900">
+            </div>
+          </div>
+          <div class="chip chip--formats"><span class="chip-dots"><i>.docx</i><i>.odt</i><i>.pdf</i></span><strong>12 formats</strong></div>
+          <div class="chip chip--saved"><span class="tick">✓</span>Saved as .docx</div>
+          <div class="chip chip--offline"><span class="badge badge--green">●</span>Works offline</div>
+          <div class="chip chip--one"><span class="badge badge--orange">◆</span>One app for every device</div>
+        </div>
+      </section>
+
+      <!-- Format strip -->
+      <section class="formats reveal">
+        <p>Opens and saves the files you already have</p>
+        <ul>
+          <li>DOCX</li><li>ODT</li><li>RTF</li><li>PDF</li><li>Markdown</li><li>HTML</li><li>LaTeX</li><li>TXT</li>
+        </ul>
+      </section>
+
+      <!-- Bento features -->
+      <section class="section" id="features">
+        <h2 class="section-title reveal">Enhance Your <span class="accent-blue">Writing</span><br><span class="accent-orange">Journey</span> with Wordpadx</h2>
+
+        <div class="bento">
+          <article class="tile reveal">
+            <h3>Write, review and refine without leaving the page</h3>
+            <p>Track changes, margin comments, spelling and grammar as you type. Accept or reject edits one by one.</p>
+            <div class="tile-art tile-art--goals">
+              <div class="mini-icons"><span class="mi mi--blue">✎</span><span class="mi mi--orange">✓</span></div>
+              <div class="goal-card">
+                <div class="goal-head"><span class="goal-icon">¶</span><span class="goal-add">+ Add comment</span></div>
+                <strong>The Open Studio Handbook</strong>
+                <small><ins>forty</ins> <del>thirty</del> members · 3 comments</small>
+              </div>
+            </div>
+          </article>
+
+          <article class="tile reveal reveal--late">
+            <h3>Familiar where it counts</h3>
+            <p>Word's ribbon tabs, groups and shortcuts. Coverage of Word's ribbon features, measured on every build.</p>
+            <div class="tile-art tile-art--chart">
+              <div class="chart-head"><span>Ribbon features working</span><strong>483 / 498</strong></div>
+              <div class="bars" role="img" aria-label="Working ribbon features per tab: Home 102, Insert 47, Layout 22, References 25, Review 29, View 25">
+                <div class="bar bar--hot" style="--h:100%"><em>102</em><span>Home</span></div>
+                <div class="bar" style="--h:46%"><span>Insert</span></div>
+                <div class="bar" style="--h:22%"><span>Layout</span></div>
+                <div class="bar" style="--h:25%"><span>Refs</span></div>
+                <div class="bar" style="--h:28%"><span>Review</span></div>
+                <div class="bar" style="--h:25%"><span>View</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="tile tile--wide reveal">
+            <div class="tile-wide-copy">
+              <h3>Private by design, fast by nature</h3>
+              <p>Spelling, grammar and everything else run on your device, with no account and no tracking. Paragraph layout is cached, so typing in a 188-page document re-lays it out in about 1.4&nbsp;ms.</p>
+              <a class="btn btn--dark btn--sm" href="https://github.com/abahvictor360-sketch/Wordpadx" target="_blank" rel="noopener">Read the code</a>
+            </div>
+            <div class="tile-art tile-art--secure">
+              <span class="float float--a">⌘</span>
+              <div class="chip chip--inline"><span class="tick">✓</span>Spell check offline</div>
+              <span class="float float--b">✦</span>
+              <span class="float float--c">◆</span>
+              <div class="balance">
+                <div class="balance-head"><span class="flag">Aa</span>English (US) ▾</div>
+                <small>Document</small>
+                <strong>12,480 words</strong>
+                <small>Languages</small>
+                <span class="mono">12 interface languages</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Tour -->
+      <section class="section tour" id="tour">
+        <div class="tour-head reveal">
+          <h2>Everything You Need<br><span class="accent-blue">for Real</span> <span class="accent-orange">Documents</span></h2>
+          <a class="btn btn--primary btn--sm" href="#platforms">Start for free</a>
+        </div>
+        <div class="tour-body">
+          <div class="tour-list" role="tablist" aria-label="Wordpadx features">
+            <button class="tour-item is-active" role="tab" aria-selected="true" data-shot="review" data-alt="The Review tab with tracked changes and comment balloons">
+              <span class="ti-icon">⇄</span><span class="ti-title">Review &amp; track changes</span>
+              <span class="ti-text">Insertions and deletions in colour, comments in the margin, accept or reject.</span>
+            </button>
+            <button class="tour-item" role="tab" aria-selected="false" data-shot="references" data-alt="The References tab with a table of contents and a styled table">
+              <span class="ti-icon">▤</span><span class="ti-title">References</span>
+              <span class="ti-text">Tables of contents, footnotes, citations in APA, MLA, Chicago or IEEE, and an index.</span>
+            </button>
+            <button class="tour-item" role="tab" aria-selected="false" data-shot="design" data-alt="The Design tab with style sets and a DRAFT watermark">
+              <span class="ti-icon">◇</span><span class="ti-title">Design &amp; themes</span>
+              <span class="ti-text">Themes, style sets, watermarks, page colour and borders.</span>
+            </button>
+            <button class="tour-item" role="tab" aria-selected="false" data-shot="layout" data-alt="The Layout tab with a drop cap, text wrapping and line numbers">
+              <span class="ti-icon">⊞</span><span class="ti-title">Page layout</span>
+              <span class="ti-text">Drop caps, text wrapping around pictures, hyphenation and line numbers.</span>
+            </button>
+            <button class="tour-item" role="tab" aria-selected="false" data-shot="dark" data-alt="Wordpadx in dark mode with formatting marks shown">
+              <span class="ti-icon">☾</span><span class="ti-title">Dark mode</span>
+              <span class="ti-text">Easy on the eyes at night, with formatting marks when you need them.</span>
+            </button>
+          </div>
+          <div class="tour-stage reveal reveal--late">
+            <div class="device device--tour">
+              <div class="device-screen">
+                <img id="tourShot" src="assets/images/review.png" alt="The Review tab with tracked changes and comment balloons" width="1440" height="900" loading="lazy">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Platforms (pricing-style cards) -->
+      <section class="section" id="platforms">
+        <h2 class="section-title reveal">Simple &amp; <span class="accent-orange">Free</span> on Every Device</h2>
+        <p class="section-sub reveal">No subscriptions, no account, no hidden fees. Wordpadx is open source under MIT or Apache-2.0.</p>
+        <div class="seg reveal" role="tablist" aria-label="Device type">
+          <button class="seg-btn is-active" data-filter="all" aria-selected="true">All</button>
+          <button class="seg-btn" data-filter="tablet" aria-selected="false">Tablet</button>
+          <button class="seg-btn" data-filter="desktop" aria-selected="false">Desktop</button>
+        </div>
+        <div class="plans">
+          <article class="plan reveal" data-kind="tablet">
+            <span class="plan-name">Android tablet</span>
+            <div class="plan-price">$0<small>/forever</small></div>
+            <p class="plan-desc">Native app with the system file picker and Downloads export.</p>
+            <a class="btn btn--light btn--full" href="https://github.com/abahvictor360-sketch/Wordpadx/releases/latest/download/app-debug.apk">Download APK</a>
+            <ul class="checks">
+              <li>Opens .docx, .odt and .txt</li>
+              <li>Samsung DeX and split screen</li>
+              <li>Stylus input</li>
+            </ul>
+            <small class="plan-note">Debug-signed: allow installs from unknown sources.</small>
+          </article>
+          <article class="plan plan--featured reveal reveal--late" data-kind="tablet">
+            <span class="plan-name">Web app &amp; iPad</span>
+            <div class="plan-price">$0<small>/forever</small></div>
+            <p class="plan-desc">Install from the browser as a full-screen app that works offline.</p>
+            <a class="btn btn--primary btn--full" href="app/?sample">Open the web app</a>
+            <ul class="checks">
+              <li>Safari → Share → Add to Home Screen (<a href="https://github.com/abahvictor360-sketch/Wordpadx/blob/main/TABLET_GUIDE.md">guide</a>)</li>
+              <li>Split View and Stage Manager</li>
+              <li>Apple Pencil</li>
+              <li>Native iPad build: <a href="https://github.com/abahvictor360-sketch/Wordpadx/releases/latest/download/Wordpadx-iPad.zip">zip</a> (unsigned)</li>
+            </ul>
+          </article>
+          <article class="plan reveal" data-kind="desktop">
+            <span class="plan-name">Desktop</span>
+            <div class="plan-price">$0<small>/forever</small></div>
+            <p class="plan-desc">macOS, Windows, Linux and BSD, natively on the GPU.</p>
+            <a class="btn btn--light btn--full" href="https://github.com/abahvictor360-sketch/Wordpadx#build-from-source">Build from source</a>
+            <ul class="checks">
+              <li>Command-line converter</li>
+              <li>MCP server for AI agents</li>
+              <li>PDF export with selectable text</li>
+              <li>Mail merge, envelopes and labels</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- Open source block (in place of a testimonial) -->
+      <section class="section open">
+        <div class="open-copy reveal">
+          <h2>Open Source, Built in Rust, Yours to Keep</h2>
+          <blockquote>“Every action is a command with an id. The same commands drive the ribbon, keyboard shortcuts, a command-line tool and an MCP server, so people and agents edit documents the same way.”</blockquote>
+          <div class="stats">
+            <div><strong>600+</strong><span>commands</span></div>
+            <div><strong>1,500</strong><span>automated tests</span></div>
+            <div><strong>12</strong><span>languages</span></div>
+          </div>
+        </div>
+        <figure class="open-shot reveal reveal--late">
+          <img src="assets/images/backstage.png" alt="The File tab start page with templates and recent documents" width="1440" height="900" loading="lazy">
+          <figcaption><strong>Start from a template</strong><span>Letter, résumé, report and more</span></figcaption>
+        </figure>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta reveal">
+        <span class="cta-mark"><img src="assets/icons/app-icon.svg" alt="" width="40" height="40"></span>
+        <h2>Get Wordpadx on Your Tablet</h2>
+        <p>Open, edit and export documents anywhere, anytime, even without a connection.</p>
+        <a class="btn btn--light" href="#platforms">Download app</a>
+      </section>
+
+      <!-- Follow -->
+      <section class="follow">
+        <div class="follow-copy reveal">
+          <span class="follow-icon">✉</span>
+          <h2>Keep Up with<br>the Latest</h2>
+          <p>Every successful build is published as a release on GitHub.</p>
+        </div>
+        <div class="follow-form reveal reveal--late">
+          <h3>Stay up to date</h3>
+          <div class="follow-row">
+            <span class="follow-field">github.com/abahvictor360-sketch/Wordpadx</span>
+            <a class="btn btn--primary" href="https://github.com/abahvictor360-sketch/Wordpadx/subscription" target="_blank" rel="noopener">Watch releases</a>
+          </div>
+          <small>Choose <em>Custom → Releases</em> to hear only about new versions.</small>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-top">
+        <a class="brand" href="#top"><img src="assets/icons/app-icon.svg" alt="" class="brand-mark" width="28" height="28"><span>Wordpadx</span></a>
+        <div class="footer-cols">
+          <div><h4>Product</h4><a href="#features">Features</a><a href="#tour">Tour</a><a href="#platforms">Platforms</a></div>
+          <div><h4>Download</h4><a href="https://github.com/abahvictor360-sketch/Wordpadx/releases">Releases</a><a href="https://github.com/abahvictor360-sketch/Wordpadx/blob/main/TABLET_GUIDE.md">Tablet guide</a><a href="https://github.com/abahvictor360-sketch/Wordpadx#build-from-source">Build from source</a></div>
+          <div><h4>Project</h4><a href="https://github.com/abahvictor360-sketch/Wordpadx">GitHub</a><a href="https://github.com/abahvictor360-sketch/Wordpadx/issues">Report a problem</a><a href="https://github.com/storytold/wordcraft">Upstream: WordCraft</a></div>
+          <div><h4>Legal</h4><a href="https://github.com/abahvictor360-sketch/Wordpadx/blob/main/LICENSE-MIT">MIT licence</a><a href="https://github.com/abahvictor360-sketch/Wordpadx/blob/main/LICENSE-APACHE">Apache-2.0</a><a href="https://github.com/abahvictor360-sketch/Wordpadx/blob/main/ATTRIBUTION.md">Attribution</a></div>
+        </div>
       </div>
-    </section>
-
-    <section class="trust-strip">
-      <div class="shell trust-inner">
-        <span class="trust-label">A thoughtful tool for every kind of work</span>
-        <div class="trust-items"><span>✦ Writers</span><span>◌ Students</span><span>◇ Teams</span><span>⌁ Creators</span></div>
+      <div class="footer-bottom">
+        <span>© 2026 Wordpadx contributors. Not affiliated with Microsoft.</span>
+        <div class="theme-switch" role="group" aria-label="Colour theme">
+          <button type="button" data-theme-set="light" aria-label="Light theme">☀</button>
+          <button type="button" data-theme-set="dark" aria-label="Dark theme">☾</button>
+        </div>
       </div>
-    </section>
-
-    <section class="section shell" id="features">
-      <div class="section-heading reveal"><div class="eyebrow">Why Wordpadx</div><h2>Simple on the surface.<br><em>Powerful underneath.</em></h2><p>Everything you need to turn a blank page into something worth sharing.</p></div>
-      <div class="feature-grid">
-        <article class="feature-card feature-card--wide reveal"><div class="feature-icon feature-icon--green">✦</div><h3>Stay in the flow</h3><p>A clean, quiet interface that keeps tools close and distractions far away. Your thoughts get the room they deserve.</p><div class="feature-lines"><span></span><span></span><span class="short"></span></div></article>
-        <article class="feature-card reveal"><div class="feature-icon feature-icon--lavender">⌁</div><h3>Fast by nature</h3><p>Native performance and GPU rendering make every tap, scroll, and edit feel instant.</p><div class="speed-stat"><strong>60</strong><span>FPS<br>smooth</span></div></article>
-        <article class="feature-card reveal"><div class="feature-icon feature-icon--peach">↗</div><h3>Your files, your way</h3><p>Work with DOCX, PDF, Markdown, and more. Export cleanly whenever you are ready.</p><div class="format-pills"><span>.DOCX</span><span>.PDF</span><span>.MD</span></div></article>
-      </div>
-    </section>
-
-    <section class="preview-section" id="preview">
-      <div class="shell preview-layout">
-        <div class="preview-copy reveal"><div class="eyebrow">A closer look</div><h2>Built to feel<br><em>naturally yours.</em></h2><p>From a quick note to a 200-page manuscript, Wordpadx stays out of your way. Switch from phone to tablet to desktop without changing how you think.</p><a class="text-link" href="#downloads">Find your platform <span>→</span></a></div>
-        <div class="preview-window reveal reveal--late"><div class="window-bar"><span></span><span></span><span></span><small>Morning thoughts · Wordpadx</small></div><img src="assets/images/hero.png" alt="Wordpadx editor showing a formatted document"></div>
-      </div>
-    </section>
-
-    <section class="downloads-section section shell" id="downloads">
-      <div class="download-heading reveal"><div class="eyebrow">Take it with you</div><h2>Start writing<br><em>anywhere.</em></h2><p>Download the build for your device and pick up exactly where you left off.</p></div>
-      <div class="download-grid">
-        <article class="download-card download-card--android reveal">
-          <div class="platform-top"><span class="platform-logo">✦</span><span class="platform-label">For Android</span></div>
-          <h3>Wordpadx for Android</h3><p>Optimized for phones, tablets, and DeX. Install the latest APK directly.</p>
-          <div class="download-meta"><span>Android 8.0+</span><span>APK</span></div>
-          <a class="button button--dark button--full" href="https://github.com/abahvictor360-sketch/Wordpadx/releases/download/v0.5.0/app-debug.apk" target="_blank" rel="noopener">Download APK <span>↓</span></a>
-          <small class="download-footnote">Free · Open source · Latest release</small>
-        </article>
-        <article class="download-card download-card--ios reveal reveal--late">
-          <div class="platform-top"><span class="platform-logo platform-logo--ios">●</span><span class="platform-label">For iPhone & iPad</span></div>
-          <h3>Wordpadx for iOS</h3><p>A focused writing space for iPhone and iPad, with Apple Pencil and Split View support.</p>
-          <div class="download-meta"><span>iOS 16+</span><span>IPA / Xcode</span></div>
-          <a class="button button--dark button--full" href="https://github.com/abahvictor360-sketch/Wordpadx/releases/download/v0.5.0/Wordpadx-iPad.zip" target="_blank" rel="noopener">Download iOS build <span>↓</span></a>
-          <small class="download-footnote">Free · Open source · Latest release</small>
-        </article>
-      </div>
-      <p class="release-note">Looking for desktop? <a href="https://github.com/abahvictor360-sketch/Wordpadx/releases" target="_blank" rel="noopener">Browse all releases on GitHub ↗</a></p>
-    </section>
-
-    <section class="closing-section">
-      <div class="shell closing-inner reveal"><div class="closing-mark">✦</div><h2>Good ideas deserve<br><em>a good place to land.</em></h2><a class="button button--light" href="#downloads">Get Wordpadx <span>↗</span></a></div>
-    </section>
-  </main>
-
-  <footer class="footer"><div class="shell footer-inner"><a class="brand" href="#"><img src="assets/icons/app-icon.png" alt="" class="brand-mark"><span>Wordpadx</span></a><span>Open source writing, made with care.</span><div><a href="https://github.com/abahvictor360-sketch/Wordpadx" target="_blank" rel="noopener">GitHub ↗</a><a href="#downloads">Downloads</a></div></div></footer>
+    </footer>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>

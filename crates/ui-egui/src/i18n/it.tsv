@@ -17,9 +17,9 @@
 	(no style)	(nessuno stile)
 	(no suggestions)	(nessun suggerimento)
 	1.5 Line Spacing	Interlinea 1,5
-	A free, open-source word processor written from scratch in Rust.\nPart of the Crafting Apps from the ArtCraft team.	Un elaboratore di testi gratuito e open source, scritto da zero in Rust.\nFa parte delle Crafting Apps del team ArtCraft.
+	A free, open-source word processor written from scratch in Rust.	Un elaboratore di testi gratuito e open source, scritto da zero in Rust.
 	About	Informazioni
-	About WordCraft	Informazioni su WordCraft
+	About Wordpadx	Informazioni su Wordpadx
 	Accept	Accetta
 	Accept All Changes	Accetta tutte le modifiche
 	Accept This Change	Accetta questa modifica
@@ -218,7 +218,6 @@
 	Comment	Commento
 	Comments	Commenti
 	Comments Pane	Riquadro Commenti
-	Community\nDiscord	Community\nDiscord
 	Compact	Compatto
 	Compare	Confronta
 	Compress Pictures	Comprimi immagini
@@ -271,8 +270,6 @@
 	Different First Page	Prima pagina diversa
 	Different Odd & Even Pages	Pagine pari e dispari diverse
 	Direct formatting	Formattazione diretta
-	Discord	Discord
-	Discord community	Community Discord
 	Display	Visualizza
 	Display for Review	Visualizza per revisione
 	Distribute Columns	Distribuisci colonne
@@ -435,8 +432,6 @@
 	Inspect Styles at Selection	Ispeziona stili nella selezione
 	Interface language:	Lingua dell'interfaccia:
 	Italic	Corsivo
-	Join the ArtCraft community on Discord	Unisciti alla community di ArtCraft su Discord
-	Join us on Discord: discord.gg/artcraft	Unisciti a noi su Discord: discord.gg/artcraft
 	Justify	Giustifica
 	Keep Lines Together	Mantieni righe insieme
 	Keep Text Only	Mantieni solo testo
@@ -742,7 +737,6 @@
 	Show only comments and formatting in balloons	Mostra solo commenti e formattazione nei fumetti
 	Show revisions in balloons	Mostra revisioni nei fumetti
 	Show rulers	Mostra righelli
-	Show the community button in the title bar	Mostra il pulsante della community nella barra del titolo
 	Show/Hide ¶	Mostra tutto
 	Show\nComments	Mostra\ncommenti
 	Shrink Font 1 Point	Riduci carattere di 1 punto
@@ -757,7 +751,7 @@
 	Small caps	Maiuscoletto
 	SmartArt	SmartArt
 	Sort	Ordina
-	Source code: github.com/storytold/wordcraft	Codice sorgente: github.com/storytold/wordcraft
+	Source code: github.com/abahvictor360-sketch/Wordpadx	Codice sorgente: github.com/abahvictor360-sketch/Wordpadx
 	Space	Spazio
 	Space before/after:	Spazio prima/dopo:
 	Spacing	Spaziatura
@@ -892,7 +886,7 @@
 	Word Right	Parola a destra
 	Word document (*.docx)	Documento Word (*.docx)
 	WordArt	WordArt
-	WordCraft	WordCraft
+	Wordpadx	Wordpadx
 	Words	Parole
 	Words only	Solo parole
 	Wrap Text	Testo a capo
@@ -1126,7 +1120,6 @@
 	Insert a new equation (Alt+=)	Inserisci una nuova equazione (Alt+=)
 	Leave the equation (Esc)	Esci dall'equazione (Esc)
 	Preview	Anteprima
-	getartcraft.com/apps/wordcraft	getartcraft.com/apps/wordcraft
 	Draw Ink	Disegna a penna
 	Erase Ink	Cancella penna
 	Hide Ink	Nascondi penna
@@ -2119,7 +2112,7 @@
 	Brackets	Parentesi quadre
 	Brackets with Separators	Parentesi con separatori
 	Breve	Breve
-	Browse in WordCraft…	Sfoglia in WordCraft…
+	Browse in Wordpadx…	Sfoglia in Wordpadx…
 	CONFIDENTIAL	RISERVATO
 	Cases (Three Conditions)	Casi (tre condizioni)
 	Cases (Two Conditions)	Casi (due condizioni)
@@ -2293,7 +2286,7 @@
 	On	Attivato
 	On: the caret glides to its new place when you type or use the arrow keys, and its blink fades. Off: it jumps and blinks on and off.	Attivato: il cursore scorre nella nuova posizione quando scrivi o usi i tasti freccia, e il lampeggio sfuma. Disattivato: salta e lampeggia acceso e spento.
 	One half	Un mezzo
-	Open a file with WordCraft's own browser when the system file dialog doesn't appear.	Apri un file con il browser di WordCraft quando la finestra di dialogo dei file del sistema non compare.
+	Open a file with Wordpadx's own browser when the system file dialog doesn't appear.	Apri un file con il browser di Wordpadx quando la finestra di dialogo dei file del sistema non compare.
 	Operator Structures	Strutture di operatori
 	Operators	Operatori
 	Other Large Operators	Altri operatori grandi

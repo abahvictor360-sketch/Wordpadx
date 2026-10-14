@@ -3,9 +3,9 @@
 	(no style)	(スタイルなし)
 	(no suggestions)	（候補なし）
 	1.5 Line Spacing	1.5 行
-	A free, open-source word processor written from scratch in Rust.\nPart of the Crafting Apps from the ArtCraft team.	Rust でゼロから書かれた、無料のオープンソース ワープロです。\nArtCraft チームの Crafting Apps のひとつです。
+	A free, open-source word processor written from scratch in Rust.	Rust でゼロから書かれた、無料のオープンソース ワープロです。
 	About	情報
-	About WordCraft	WordCraft について
+	About Wordpadx	Wordpadx について
 	Accept	承諾
 	Accept All Changes	すべての変更を承諾
 	Accept This Change	この変更を承諾
@@ -272,7 +272,6 @@
 	Comment	コメント
 	Comments	コメント
 	Comments Pane	コメント ウィンドウ
-	Community\nDiscord	コミュニティ\nDiscord
 	Compact	コンパクト
 	Compare	比較
 	Compress Pictures	図の圧縮
@@ -325,8 +324,6 @@
 	Dictate	ディクテーション
 	Different First Page	先頭ページのみ別指定
 	Different Odd & Even Pages	奇数/偶数ページ別指定
-	Discord	Discord
-	Discord community	Discord コミュニティ
 	Display	表示
 	Display for Review	変更内容の表示
 	Distribute Columns	列の幅を揃える
@@ -484,8 +481,6 @@
 	Inspect Document	ドキュメント検査
 	Interface language:	表示言語:
 	Italic	斜体
-	Join the ArtCraft community on Discord	Discord の ArtCraft コミュニティに参加
-	Join us on Discord: discord.gg/artcraft	Discord で参加: discord.gg/artcraft
 	Justify	両端揃え
 	Keep Lines Together	段落を分割しない
 	Keep lines together	段落を分割しない
@@ -789,7 +784,6 @@
 	Animation	アニメーション
 	Animate the caret (it glides and fades)	カーソルをアニメーション表示する（滑らかに移動してフェードする）
 	On: the caret glides to its new place when you type or use the arrow keys, and its blink fades. Off: it jumps and blinks on and off.	オン: 入力や矢印キーの操作でカーソルが新しい位置へ滑らかに移動し、点滅もフェードします。オフ: カーソルは瞬時に移動し、点滅は表示と非表示が切り替わるだけです。
-	Show the community button in the title bar	タイトル バーにコミュニティ ボタンを表示する
 	Show/Hide ¶	編集記号の表示/非表示 ¶
 	Show\nComments	コメントの表示
 	Shrink Font 1 Point	フォントを 1 ポイント縮小
@@ -805,7 +799,7 @@
 	Small caps	小型英大文字
 	SmartArt	SmartArt
 	Sort	並べ替え
-	Source code: github.com/storytold/wordcraft	ソース コード: github.com/storytold/wordcraft
+	Source code: github.com/abahvictor360-sketch/Wordpadx	ソース コード: github.com/abahvictor360-sketch/Wordpadx
 	Space	スペース
 	Space before/after:	段落前/後の間隔:
 	Spacing	間隔
@@ -938,7 +932,7 @@
 	Word Left	前の単語へ
 	Word Right	次の単語へ
 	WordArt	ワードアート
-	WordCraft	WordCraft
+	Wordpadx	Wordpadx
 	Words	単語数
 	Words only	単語のみ
 	Wrap Text	文字列の折り返し
@@ -1185,7 +1179,6 @@
 	Insert a new equation (Alt+=)	新しい数式を挿入 (Alt+=)
 	Leave the equation (Esc)	数式を終了 (Esc)
 	Preview	プレビュー
-	getartcraft.com/apps/wordcraft	getartcraft.com/apps/wordcraft
 	Draw Ink	インクで描く
 	Erase Ink	インクを消す
 	Hide Ink	インクを隠す
@@ -1704,8 +1697,8 @@
 	This folder can't be read: {error}	このフォルダーを読み取れません: {error}
 	Showing the first {count} items.	最初の {count} 項目を表示しています。
 	File name:	ファイル名:
-	Browse in WordCraft…	WordCraft で参照…
-	Open a file with WordCraft's own browser when the system file dialog doesn't appear.	システムのファイル ダイアログが表示されないときに、WordCraft 独自のブラウザーでファイルを開きます。
+	Browse in Wordpadx…	Wordpadx で参照…
+	Open a file with Wordpadx's own browser when the system file dialog doesn't appear.	システムのファイル ダイアログが表示されないときに、Wordpadx 独自のブラウザーでファイルを開きます。
 	Hide White Space	余白を非表示
 	All pages	すべてのページ
 	Current page	現在のページ

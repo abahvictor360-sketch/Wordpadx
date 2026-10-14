@@ -156,7 +156,7 @@ jobs:
           if-no-files-found: ignore
 
   deploy-pages:
-    name: Deploy PWA for Tablet Browsers
+    name: Deploy landing page and PWA
     needs: build-web
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -173,10 +173,17 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # One Pages site: the landing page at the root, the web app (PWA) under /app/.
+      - name: Assemble site
+        run: |
+          mkdir -p _site/app
+          cp -R website/. _site/
+          cp -R dist/web/. _site/app/
+
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/web
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
