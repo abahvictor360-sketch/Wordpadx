@@ -10,14 +10,14 @@ Wordpadx brings full-featured word processing and document design to tablets (An
 Both iPad (iPadOS) and Android tablets support installing Wordpadx directly as a fullscreen, offline-capable Progressive Web App:
 
 - **On iPad (Safari):**
-  1. Open the hosted Wordpadx URL in Safari.
+  1. Open https://abahvictor360-sketch.github.io/Wordpadx/app/ in Safari.
   2. Tap the **Share** button (box with an arrow pointing up) in Safari's toolbar.
   3. Scroll down and tap **Add to Home Screen**.
   4. Wordpadx will appear as a standalone app on your iPad Home Screen and dock, running fullscreen without browser navigation bars.
   5. Supports **Split View**, **Slide Over**, **Stage Manager**, and **Apple Pencil**.
 
 - **On Android Tablet (Chrome / Edge / Firefox):**
-  1. Open the hosted Wordpadx URL.
+  1. Open https://abahvictor360-sketch.github.io/Wordpadx/app/.
   2. Tap the **three dots menu** (⋮) in the top-right corner.
   3. Tap **Install app** or **Add to Home screen**.
   4. Wordpadx will be installed into your tablet's app drawer and home screen.
@@ -71,5 +71,5 @@ The repository includes an automated workflow [`.github/workflows/build-mobile.y
    - WebAssembly compilation of Wordpadx.
    - Building the Android APK (`Wordpadx-Android-Tablet-Debug.apk`).
    - Building the iPad app (`Wordpadx-iPad-App`).
-   - Deploying the live PWA to GitHub Pages.
+   - Deploying the website to GitHub Pages, with the PWA at https://abahvictor360-sketch.github.io/Wordpadx/app/.
 2. Download ready-to-install builds directly from the **Actions** tab artifacts or releases.

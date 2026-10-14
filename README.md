@@ -50,12 +50,12 @@
 |---|---|---|
 | **Android tablet** | Download `app-debug.apk` from the [latest release](https://github.com/abahvictor360-sketch/Wordpadx/releases/latest) | Debug-signed: allow installs from unknown sources. Opens .docx, .odt and .txt; exports go to Downloads. Works with Samsung DeX, split screen and a stylus. |
 | **iPad** | Install the web app (below), or download `Wordpadx-iPad.zip` from the [latest release](https://github.com/abahvictor360-sketch/Wordpadx/releases/latest) | The zip is unsigned and must be signed before it installs; building it in Xcode is simpler. Supports Split View, Stage Manager and Apple Pencil. |
-| **Any tablet browser** | Open the website, then Safari → Share → *Add to Home Screen*, or Chrome → ⋮ → *Install app* | Needs WebGPU or WebGL2. Runs full screen and keeps working offline once loaded. |
+| **Any tablet browser** | Open the [web app](https://abahvictor360-sketch.github.io/Wordpadx/app/), then Safari → Share → *Add to Home Screen*, or Chrome → ⋮ → *Install app* | Needs WebGPU or WebGL2. Runs full screen and keeps working offline once loaded. |
 | **macOS, Windows, Linux, BSD** | [Build from source](#build-from-source) | Native app on the GPU. |
 
 Every push to `main` builds the web app, the Android APK and the iPad app
-([`build-mobile.yml`](.github/workflows/build-mobile.yml)), and each successful build is published
-as a `v0.5.0-build.N` prerelease. Step-by-step tablet instructions: **[TABLET_GUIDE.md](TABLET_GUIDE.md)**.
+([`build-mobile.yml`](.github/workflows/build-mobile.yml)), publishes the website with the web app
+under `/app/`, and publishes each successful build as a `v0.5.0-build.N` prerelease. Step-by-step tablet instructions: **[TABLET_GUIDE.md](TABLET_GUIDE.md)**.
 
 ## Features
 
