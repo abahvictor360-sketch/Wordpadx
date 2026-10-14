@@ -93,3 +93,4 @@ own (`AGENTS.md`: no Microsoft iconography, ever).
 | 2026-10-10 | trivial | Draw tab tools and Review › Hide Ink (#307) |
 | 2026-10-11 | trivial | Draw: Lasso, Add Pen gallery, Ink to Shape and Ink Replay (#395) |
 | 2026-10-14 | trivial | Phone layout (Web Layout, no rulers, compact title and status bars) below 560 × 480 pt; Web Layout wraps to the window as in Word |
+| 2026-10-14 | trivial | Responsive tab strip actions, automatic Page Width on narrow windows, status bar items drop by width |

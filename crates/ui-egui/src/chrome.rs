@@ -229,6 +229,11 @@ pub fn title_bar(app: &mut WordApp, ui: &mut Ui) {
         });
 }
 
+/// Status bars narrower than this (points) leave out the language.
+const STATUS_LANGUAGE_WIDTH: f32 = 760.0;
+/// Status bars narrower than this (points) also leave out the zoom slider and Focus.
+const STATUS_SLIDER_WIDTH: f32 = 640.0;
+
 pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
     egui::Panel::bottom("status")
@@ -259,6 +264,9 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                     let _ = app.run("ui.dialog", json!({"name": "goto"}));
                 }
                 let phone = app.phone;
+                // Narrower windows drop the language, then the zoom slider and Focus.
+                let width = ui.max_rect().width();
+                let (language, slider) = (!phone && width >= STATUS_LANGUAGE_WIDTH, !phone && width >= STATUS_SLIDER_WIDTH);
                 let words = if phone { 0 } else { app.cached_word_count() };
                 // A selected picture/shape/text box isn't a text selection: show the total.
                 let wtxt = if app.session.sel.is_collapsed() || crate::objects::selected(app).is_some() {
@@ -274,7 +282,7 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                 if !phone && app.session.sel.focus.story != StoryRef::Body && !crate::canvas::in_text_box(app) {
                     st(ui, tl!("Editing header/footer"));
                 }
-                if !phone {
+                if language {
                     st(ui, tl!("English (United States)"));
                 }
                 if !phone && app.session.doc.settings.track_changes {
@@ -308,7 +316,7 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                         let _ = app.run("view.zoomIn", json!({}));
                     }
                     // Zoom slider (10%–500%, 100% in the middle).
-                    if !phone {
+                    if slider {
                         let mut v = app.canvas.scale / crate::canvas::PX_PER_PT;
                         let slider = egui::Slider::new(&mut v, 0.1..=5.0).logarithmic(true).show_value(false);
                         ui.spacing_mut().slider_width = 110.0;
@@ -338,7 +346,7 @@ pub fn status_bar(app: &mut WordApp, ui: &mut Ui) {
                             let _ = app.run(id, json!({}));
                         }
                     }
-                    if phone {
+                    if !slider {
                         return;
                     }
                     ui.add_space(8.0);

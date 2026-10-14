@@ -316,6 +316,32 @@ fn place_pages(sizes: &[(f32, f32)], markup: f32, scale: f32, cols: usize, avail
     (rects, vec2(content_w, y.max(avail.y)))
 }
 
+/// Print Layout at 100% on a window too narrow for the page (a tablet in portrait, a narrow
+/// window): zoom to Page Width so the page isn't cut off, and back to 100% once it fits again. A
+/// zoom the user chose is left alone.
+pub(crate) fn auto_fit_page(app: &mut WordApp, layout: &DocLayout, avail_w: f32) {
+    let v = &app.session.view;
+    if v.mode != wordcraft_layout::ViewMode::Print || v.read_mode {
+        return;
+    }
+    let page_w = layout.pages.iter().map(|p| sane_dim(p.w, 1e5)).fold(0.0f32, f32::max).max(72.0) + markup_width(app);
+    let fits = page_fits_at_100(page_w, avail_w);
+    let (unzoomed, page_width) = (v.fit.is_empty() && (v.zoom - 1.0).abs() < 1e-3, v.fit == "pageWidth");
+    if !app.page_auto_fit && !fits && unzoomed {
+        app.page_auto_fit = app.run("view.pageWidth", json!({})).is_ok();
+    } else if app.page_auto_fit && (fits || !page_width) {
+        app.page_auto_fit = false;
+        if fits && page_width {
+            let _ = app.run("view.zoom100", json!({}));
+        }
+    }
+}
+
+/// Whether a page `page_w` points wide fits across a canvas `avail_w` pixels wide at 100%.
+fn page_fits_at_100(page_w: f32, avail_w: f32) -> bool {
+    page_w * PX_PER_PT + 2.0 * GAP + 20.0 <= avail_w
+}
+
 /// The width Web Layout wraps text to, in points, for a canvas `avail_w` pixels wide shown at
 /// `scale` pixels per point: the canvas less the scroll bar and the gaps beside the page, in whole
 /// points so a fraction of a pixel doesn't lay the document out again.
@@ -504,6 +530,7 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
         let pct = (app.canvas.scale / PX_PER_PT * zoom_delta * 100.0).clamp(10.0, 500.0);
         let _ = app.run("view.zoom", json!({"value": pct}));
     }
+    auto_fit_page(app, &layout, area.width() - 14.0);
     let geo = geometry(app, &layout, area.size() - vec2(14.0, 0.0));
     // The status bar's zoom readout and slider were laid out before this, from the last frame's
     // scale: after a zoom change draw again at once, so they follow in the next frame rather than
@@ -2130,6 +2157,15 @@ mod tests {
     use super::*;
 
     /// Web Layout wraps to the canvas less the scroll bar and gaps, in whole points, and stays
+    /// A US Letter page (612 pt) fits at 100% on a laptop-sized canvas but not on a tablet in
+    /// portrait.
+    #[test]
+    fn letter_page_fits_at_100_only_on_wide_canvases() {
+        assert!(page_fits_at_100(612.0, 1400.0));
+        assert!(!page_fits_at_100(612.0, 754.0));
+        assert!(!page_fits_at_100(612.0, f32::NAN));
+    }
+
     /// sane for degenerate sizes.
     #[test]
     fn web_width_follows_the_canvas() {

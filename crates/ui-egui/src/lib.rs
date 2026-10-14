@@ -322,6 +322,9 @@ pub struct WordApp {
     /// The phone layout switched Print Layout to Web Layout so text wraps to the screen; leaving
     /// the phone layout (a wider window, a rotated tablet) switches back.
     phone_reflowed: bool,
+    /// The page didn't fit across the window at 100%, so the canvas zoomed it to Page Width; once
+    /// it fits again the canvas goes back to 100% ([`canvas`]).
+    pub(crate) page_auto_fit: bool,
     /// The interface theme setting last installed in egui ([`theme::apply`]).
     applied_theme: Option<theme::Appearance>,
     /// What the system last said about its animation effects ([`Services::animations_enabled`]).
@@ -411,6 +414,7 @@ impl WordApp {
             fonts_frames: 0,
             phone: false,
             phone_reflowed: false,
+            page_auto_fit: false,
             applied_theme: None,
             system_animations: None,
             applied_animations: None,
@@ -2296,6 +2300,28 @@ mod tests {
         assert!(a.quit_requested);
         assert!(a.close_requested(), "the close that follows goes ahead");
         assert!(body_text(&a).contains(UNSAVED), "nothing was replaced on the way out");
+    }
+
+    /// A page too wide for the window at 100% zooms to Page Width and back to 100% when the window
+    /// widens again; a zoom the user picked stays.
+    #[test]
+    fn page_zooms_to_fit_narrow_windows() {
+        let mut a = app();
+        let l = a.session.layout();
+        canvas::auto_fit_page(&mut a, &l, 1400.0);
+        assert!(a.session.view.fit.is_empty(), "fits at 100%");
+        canvas::auto_fit_page(&mut a, &l, 700.0);
+        assert_eq!(a.session.view.fit, "pageWidth");
+        canvas::auto_fit_page(&mut a, &l, 700.0);
+        assert_eq!(a.session.view.fit, "pageWidth", "stays fitted");
+        canvas::auto_fit_page(&mut a, &l, 1400.0);
+        assert!(a.session.view.fit.is_empty());
+        assert!((a.session.view.zoom - 1.0).abs() < 1e-6, "back to 100%");
+        a.run("view.zoom", json!({"value": 120})).unwrap();
+        canvas::auto_fit_page(&mut a, &l, 700.0);
+        assert!(a.session.view.fit.is_empty(), "the user's zoom stays");
+        assert!((a.session.view.zoom - 1.2).abs() < 1e-6);
+        assert!(!a.session.dirty);
     }
 
     /// A phone-sized window (portrait or on its side) wraps text to the screen in Web Layout and

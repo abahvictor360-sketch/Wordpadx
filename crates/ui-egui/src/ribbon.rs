@@ -73,6 +73,56 @@ pub fn in_table_public(app: &WordApp) -> bool {
     app.session.sel.focus.path.cell().is_some()
 }
 
+/// Windows narrower than this (points) show Share, Editing and Comments as icons.
+const TAB_STRIP_COMPACT_WIDTH: f32 = 1100.0;
+
+/// Share, the Editing/Reviewing mode menu and Comments, laid out right to left at the end of the
+/// tab strip; `compact` drops their labels (the tooltips keep them).
+fn tab_strip_actions(ui: &mut Ui, app: &mut WordApp, compact: bool) {
+    let t = Tokens::get(ui.ctx());
+    let share = tl!("Share");
+    let share_w = if compact { 0.0 } else { ui.ctx().fonts_mut(|f| f.layout_no_wrap(share.to_string(), medium(12.0), t.text).size().x) };
+    let size = if compact { vec2(32.0, 24.0) } else { vec2((share_w + 36.0).max(74.0), 24.0) };
+    let (r, resp) = ui.allocate_exact_size(size, Sense::click());
+    ui.painter().rect_filled(r, 4.0, if resp.hovered() { t.accent_text } else { t.accent });
+    let icon_at = if compact { r.center() } else { pos2(r.min.x + 14.0, r.center().y) };
+    icons::paint(ui.painter(), Rect::from_center_size(icon_at, vec2(14.0, 14.0)), "share", t.on_accent, t.on_accent);
+    if !compact {
+        ui.painter().text(pos2(r.min.x + 26.0, r.center().y), Align2::LEFT_CENTER, share, medium(12.0), t.on_accent);
+    }
+    let tip = if compact {
+        format!("{share}: {}", tl!("Export a copy to share (PDF, Word document)"))
+    } else {
+        tl!("Export a copy to share (PDF, Word document)").to_string()
+    };
+    if resp.on_hover_text(tip).clicked() {
+        let _ = app.run("ui.backstage", json!({"value": true, "page": "export"}));
+    }
+    ui.add_space(6.0);
+    let track = app.session.doc.settings.track_changes;
+    let mode_name = if track { tl!("Reviewing") } else { tl!("Editing") };
+    let label = if compact { "▾".to_string() } else { format!("{mode_name} ▾") };
+    let mode = crate::widgets::icon_text_button(ui, "pencil", &label, regular(12.0));
+    let mode = if compact { mode.on_hover_text(mode_name) } else { mode };
+    egui::Popup::menu(&mode).show(|ui| {
+        if ui.selectable_label(!track, tl!("Editing — edit the document directly")).clicked() {
+            let _ = app.run("review.trackChanges", json!({"value": false}));
+            ui.close();
+        }
+        if ui.selectable_label(track, tl!("Reviewing — edits become suggestions")).clicked() {
+            let _ = app.run("review.trackChanges", json!({"value": true}));
+            ui.close();
+        }
+    });
+    ui.add_space(4.0);
+    let comments = tl!("Comments");
+    let resp = crate::widgets::icon_text_button(ui, "comment", if compact { "" } else { comments }, regular(12.0));
+    let resp = if compact { resp.on_hover_text(comments) } else { resp };
+    if resp.clicked() {
+        let _ = app.run("view.commentsPane", json!({}));
+    }
+}
+
 pub fn show(app: &mut WordApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
     // Editing an equation brings up the Equation tab; leaving it goes back.
@@ -123,10 +173,19 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
         .exact_size(30.0)
         .frame(egui::Frame::NONE.fill(t.tab_strip).inner_margin(egui::Margin { left: 8, right: 10, top: 0, bottom: 0 }))
         .show(ui, |ui| {
+            // Share, Editing mode and Comments keep their place on the right; the tabs scroll in
+            // the space left of them. A narrow window shows the three as icons.
+            let full = ui.max_rect();
+            let compact = full.width() < TAB_STRIP_COMPACT_WIDTH;
+            let mut right = ui.new_child(egui::UiBuilder::new().max_rect(full).layout(egui::Layout::right_to_left(egui::Align::Center)));
+            tab_strip_actions(&mut right, app, compact);
+            let left_max = (right.min_rect().min.x - 8.0).max(full.min.x);
+            let left_rect = Rect::from_min_max(full.min, pos2(left_max, full.max.y));
+            let mut left = ui.new_child(egui::UiBuilder::new().max_rect(left_rect).layout(egui::Layout::left_to_right(egui::Align::Center)));
             egui::ScrollArea::horizontal()
                 .id_salt("ribbon_tab_strip")
                 .scroll_bar_visibility(egui::scroll_area::ScrollBarVisibility::AlwaysHidden)
-                .show(ui, |ui| {
+                .show(&mut left, |ui| {
                     ui.horizontal(|ui| {
                         ui.spacing_mut().item_spacing = vec2(2.0, 0.0);
                         for (tab, custom) in &tabs {
@@ -157,46 +216,6 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
                             }
                             resp.context_menu(|ui| crate::widgets::customize_menu_items(ui, app));
                         }
-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                            // Share, Editing mode, Comments.
-                            let share = tl!("Share");
-                            let share_w = ui.ctx().fonts_mut(|f| f.layout_no_wrap(share.to_string(), medium(12.0), t.text).size().x);
-                            let (r, resp) = ui.allocate_exact_size(vec2((share_w + 36.0).max(74.0), 24.0), Sense::click());
-                            ui.painter().rect_filled(r, 4.0, if resp.hovered() { t.accent_text } else { t.accent });
-                            icons::paint(
-                                ui.painter(),
-                                Rect::from_center_size(pos2(r.min.x + 14.0, r.center().y), vec2(14.0, 14.0)),
-                                "share",
-                                t.on_accent,
-                                t.on_accent,
-                            );
-                            ui.painter().text(pos2(r.min.x + 26.0, r.center().y), Align2::LEFT_CENTER, share, medium(12.0), t.on_accent);
-                            if resp.on_hover_text(tl!("Export a copy to share (PDF, Word document)")).clicked() {
-                                let _ = app.run("ui.backstage", json!({"value": true, "page": "export"}));
-                            }
-                            ui.add_space(6.0);
-                            let track = app.session.doc.settings.track_changes;
-                            let mode = crate::widgets::icon_text_button(
-                                ui,
-                                "pencil",
-                                &format!("{} ▾", if track { tl!("Reviewing") } else { tl!("Editing") }),
-                                regular(12.0),
-                            );
-                            egui::Popup::menu(&mode).show(|ui| {
-                                if ui.selectable_label(!track, tl!("Editing — edit the document directly")).clicked() {
-                                    let _ = app.run("review.trackChanges", json!({"value": false}));
-                                    ui.close();
-                                }
-                                if ui.selectable_label(track, tl!("Reviewing — edits become suggestions")).clicked() {
-                                    let _ = app.run("review.trackChanges", json!({"value": true}));
-                                    ui.close();
-                                }
-                            });
-                            ui.add_space(4.0);
-                            if crate::widgets::icon_text_button(ui, "comment", tl!("Comments"), regular(12.0)).clicked() {
-                                let _ = app.run("view.commentsPane", json!({}));
-                            }
-                        });
                     });
                 });
         });
