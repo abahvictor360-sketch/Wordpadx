@@ -11,6 +11,7 @@
 		A10000022C12345600000001 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000122C12345600000001 /* SceneDelegate.swift */; };
 		A10000032C12345600000001 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000132C12345600000001 /* ViewController.swift */; };
 		A10000042C12345600000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000142C12345600000001 /* Assets.xcassets */; };
+		A10000052C12345600000001 /* www in Resources */ = {isa = PBXBuildFile; fileRef = A10000162C12345600000001 /* www */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		A10000132C12345600000001 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A10000142C12345600000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A10000152C12345600000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A10000162C12345600000001 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +50,7 @@
 				A10000122C12345600000001 /* SceneDelegate.swift */,
 				A10000132C12345600000001 /* ViewController.swift */,
 				A10000142C12345600000001 /* Assets.xcassets */,
+				A10000162C12345600000001 /* www */,
 				A10000152C12345600000001 /* Info.plist */,
 			);
 			path = Wordpadx;
@@ -120,6 +123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000042C12345600000001 /* Assets.xcassets in Resources */,
+				A10000052C12345600000001 /* www in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
