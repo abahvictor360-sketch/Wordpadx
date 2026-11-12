@@ -8,11 +8,13 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.OpenableColumns
 import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.webkit.*
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +26,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
+
+    /// A document opened from another app ("Open with Wordpadx", Share) waiting for the page.
+    private var pendingDocument: Uri? = null
+    private var pageLoaded = false
 
     private val fileChooserLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -66,6 +72,78 @@ class MainActivity : AppCompatActivity() {
 
         configureWebView()
         setupAssetLoaderAndLoad()
+        pendingDocument = documentUri(intent)
+    }
+
+    /// Opened again while running (singleTask): open the new document in the running app.
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        documentUri(intent)?.let {
+            pendingDocument = it
+            if (pageLoaded) deliverPendingDocument()
+        }
+    }
+
+    /// The document an "Open with" (ACTION_VIEW) or Share (ACTION_SEND) intent carries.
+    private fun documentUri(intent: Intent?): Uri? = when (intent?.action) {
+        Intent.ACTION_VIEW -> intent.data
+        Intent.ACTION_SEND -> if (Build.VERSION.SDK_INT >= 33) {
+            intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(Intent.EXTRA_STREAM)
+        }
+        else -> null
+    }
+
+    /// The file's name as the providing app reports it, or one made from its type.
+    private fun displayName(uri: Uri): String {
+        try {
+            contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c ->
+                if (c.moveToFirst()) {
+                    val i = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (i >= 0) c.getString(i)?.takeIf { it.isNotBlank() }?.let { return it }
+                }
+            }
+        } catch (e: Exception) {
+            Log.w("Wordpadx", "No display name for $uri", e)
+        }
+        uri.lastPathSegment?.substringAfterLast('/')?.takeIf { it.contains('.') }?.let { return it }
+        val ext = contentResolver.getType(uri)?.let { MimeTypeMap.getSingleton().getExtensionFromMimeType(it) } ?: "docx"
+        return "document.$ext"
+    }
+
+    /// Read the pending document and hand it to the web app (`wordpadxOpenFile`), retrying until
+    /// the app has started; the page loads the app asynchronously after `onPageFinished`.
+    private fun deliverPendingDocument() {
+        val uri = pendingDocument ?: return
+        pendingDocument = null
+        Thread {
+            try {
+                val bytes = contentResolver.openInputStream(uri)?.use { input ->
+                    val out = java.io.ByteArrayOutputStream()
+                    val buf = ByteArray(64 * 1024)
+                    var total = 0
+                    while (true) {
+                        val n = input.read(buf)
+                        if (n < 0) break
+                        total += n
+                        if (total > MAX_DOCUMENT_BYTES) throw java.io.IOException("larger than 200 MB")
+                        out.write(buf, 0, n)
+                    }
+                    out.toByteArray()
+                } ?: throw java.io.IOException("the file couldn't be read")
+                val name = displayName(uri)
+                val b64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
+                val js = "(function o(t){if(window.wordpadxOpenFile){wordpadxOpenFile(" +
+                    org.json.JSONObject.quote(name) + ",'" + b64 + "')}else if(t<300){setTimeout(function(){o(t+1)},200)}})(0)"
+                runOnUiThread { webView.evaluateJavascript(js, null) }
+            } catch (e: Exception) {
+                Log.e("Wordpadx", "Couldn't open $uri", e)
+                runOnUiThread { Toast.makeText(this, "Couldn't open the document: ${e.message}", Toast.LENGTH_LONG).show() }
+            }
+        }.start()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -96,9 +174,18 @@ class MainActivity : AppCompatActivity() {
                 this@MainActivity.filePathCallback?.onReceiveValue(null)
                 this@MainActivity.filePathCallback = filePathCallback
 
-                val intent = fileChooserParams?.createIntent() ?: Intent(Intent.ACTION_GET_CONTENT).apply {
+                // The page asks for extensions (".docx"); Android's picker wants MIME types, and
+                // greys out files it can't match, so map them and let anything else through.
+                val mimes = fileChooserParams?.acceptTypes.orEmpty()
+                    .flatMap { it.split(',') }
+                    .map { it.trim().lowercase() }
+                    .filter { it.isNotEmpty() }
+                    .mapNotNull { t -> if (t.startsWith(".")) MimeTypeMap.getSingleton().getMimeTypeFromExtension(t.drop(1)) else t }
+                    .distinct()
+                val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
                     type = "*/*"
                     addCategory(Intent.CATEGORY_OPENABLE)
+                    if (mimes.isNotEmpty()) putExtra(Intent.EXTRA_MIME_TYPES, (mimes + "application/octet-stream").toTypedArray())
                 }
 
                 try {
@@ -136,6 +223,12 @@ class MainActivity : AppCompatActivity() {
             ): WebResourceResponse? {
                 val uri = request?.url ?: return null
                 return assetLoader.shouldInterceptRequest(uri)
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                pageLoaded = true
+                deliverPendingDocument()
             }
 
             override fun onReceivedError(
@@ -213,6 +306,10 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e("Wordpadx", "Failed saving data URI", e)
         }
+    }
+
+    companion object {
+        private const val MAX_DOCUMENT_BYTES = 200 * 1024 * 1024
     }
 
     @Deprecated("Deprecated in Java")
