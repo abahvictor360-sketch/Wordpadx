@@ -167,6 +167,8 @@ mod tests_bidi;
 #[cfg(test)]
 mod tests_fonts;
 #[cfg(test)]
+mod tests_pdf_import;
+#[cfg(test)]
 mod tests_typing;
 #[cfg(test)]
 mod tests_wordart;

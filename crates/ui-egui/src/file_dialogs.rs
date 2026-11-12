@@ -32,7 +32,7 @@ pub enum FileDialogRequest {
 pub type FileDialogAnswer = Result<Option<String>, String>;
 
 const PICTURES: &[&str] = &["png", "jpg", "jpeg", "gif", "webp", "bmp"];
-const DOCUMENTS: &[&str] = &["docx", "docm", "dotx", "dotm", "doc", "dot", "odt", "rtf", "txt", "md", "html", "htm", "tex", "json", "xml"];
+const DOCUMENTS: &[&str] = &["docx", "docm", "dotx", "dotm", "doc", "dot", "odt", "rtf", "txt", "md", "html", "htm", "tex", "json", "xml", "pdf"];
 
 /// The file types Open offers, as (label, extensions; `*` is any file): pictures for Insert/Change
 /// Picture, recipient lists for Select Recipients › Use an Existing List…, documents otherwise.
@@ -41,6 +41,7 @@ pub fn open_filters(purpose: &str) -> &'static [(&'static str, &'static [&'stati
     match purpose {
         "picture" => &[("Pictures", PICTURES)],
         "font" => &[("Fonts", wordcraft_fonts::FONT_FILE_EXTS)],
+        "pdf" => &[("PDF", &["pdf"]), ("All files", &["*"])],
         "recipients" => &[("Recipient lists", &["csv", "tsv", "txt", "xlsx", "xlsm", "ods"]), ("All files", &["*"])],
         _ => &[("Documents", DOCUMENTS), ("Word document", &["docx"]), ("All files", &["*"])],
     }
@@ -285,6 +286,15 @@ impl WordApp {
             return;
         }
         let _ = self.ask_file(FileDialogRequest::Open { purpose: "document".into() }, AfterPick::OpenDocument);
+    }
+
+    /// Convert PDF to Word: pick a PDF and open it as an editable document.
+    pub(crate) fn pick_pdf(&mut self) {
+        if let Some(f) = &self.services.open_async {
+            f("pdf");
+            return;
+        }
+        let _ = self.ask_file(FileDialogRequest::Open { purpose: "pdf".into() }, AfterPick::OpenDocument);
     }
 
     pub(crate) fn pick_picture(&mut self) {

@@ -2412,3 +2412,7 @@
 	{name} wasn't found.	{name} non è stato trovato.
 	✓ None	✓ Nessuno
 preview	Title	Esempio
+	Convert PDF to Word	Converti PDF in Word
+	Convert PDF to Word…	Converti PDF in Word…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Apre un PDF come documento modificabile; Salva lo conserva come documento di Word (.docx).
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Convertito da PDF. Salva lo conserva come documento di Word (.docx); il PDF non viene modificato.

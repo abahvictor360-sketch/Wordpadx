@@ -104,7 +104,7 @@ jobs:
   build-ios:
     name: Build iPad / iOS App
     needs: build-web
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -142,11 +142,15 @@ jobs:
         run: |
           cd mobile/ios
           mkdir -p build-output
-          find "$HOME/Library/Developer/Xcode/DerivedData" -name "Wordpadx.app" -exec cp -R {} build-output/ \; 2>/dev/null || true
-          if [ -d build-output ]; then
-            cd build-output
-            zip -r ../Wordpadx-iPad.zip . || true
-          fi
+          app=$(find "$HOME/Library/Developer/Xcode/DerivedData" -maxdepth 6 -type d -path "*Release-iphoneos/Wordpadx.app" | head -1)
+          if [ -z "$app" ]; then echo "::error::Wordpadx.app was not built"; exit 1; fi
+          # The app must carry the web app and its compiled icon, or it opens a placeholder page.
+          for f in www/index.html Assets.car; do
+            if [ ! -e "$app/$f" ]; then echo "::error::Wordpadx.app is missing $f"; ls -la "$app"; exit 1; fi
+          done
+          cp -R "$app" build-output/
+          (cd build-output && zip -qr ../Wordpadx-iPad.zip .)
+          ls -la Wordpadx-iPad.zip
 
       - name: Upload iPad Artifact
         uses: actions/upload-artifact@v4

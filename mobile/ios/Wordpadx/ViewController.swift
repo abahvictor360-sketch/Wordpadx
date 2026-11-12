@@ -3,6 +3,10 @@ import WebKit
 
 class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UIDocumentPickerDelegate {
     private var webView: WKWebView!
+    /// Documents opened before the page finished loading, handed over once it has.
+    private var pendingDocuments: [(name: String, base64: String)] = []
+    private var pageLoaded = false
+    private static let maxDocumentBytes = 200 * 1024 * 1024
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,6 +80,51 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UIDo
             }
         }
         decisionHandler(.allow)
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        pageLoaded = true
+        let pending = pendingDocuments
+        pendingDocuments.removeAll()
+        pending.forEach(deliver)
+    }
+
+    /// Open a document another app handed over: read it (with security-scoped access when it
+    /// stays in place, as Files offers) and pass it to the web app.
+    func openDocument(at url: URL) {
+        let scoped = url.startAccessingSecurityScopedResource()
+        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+        var readError: NSError?
+        var data: Data?
+        NSFileCoordinator().coordinate(readingItemAt: url, options: [], error: &readError) { readURL in
+            data = try? Data(contentsOf: readURL)
+        }
+        guard let data = data, !data.isEmpty, data.count <= ViewController.maxDocumentBytes else {
+            showOpenError(url.lastPathComponent)
+            return
+        }
+        let document = (name: url.lastPathComponent, base64: data.base64EncodedString())
+        if pageLoaded {
+            deliver(document)
+        } else {
+            pendingDocuments.append(document)
+        }
+    }
+
+    /// Hand a document to the web app (`wordpadxOpenFile`), retrying until the app has started:
+    /// the page starts it asynchronously after it has loaded.
+    private func deliver(_ document: (name: String, base64: String)) {
+        let name = (try? JSONSerialization.data(withJSONObject: [document.name], options: []))
+            .flatMap { String(data: $0, encoding: .utf8) }
+            .map { String($0.dropFirst().dropLast()) } ?? "\"document.docx\""
+        let js = "(function o(t){if(window.wordpadxOpenFile){wordpadxOpenFile(\(name),'\(document.base64)')}else if(t<300){setTimeout(function(){o(t+1)},200)}})(0)"
+        webView.evaluateJavaScript(js, completionHandler: nil)
+    }
+
+    private func showOpenError(_ name: String) {
+        let alert = UIAlertController(title: "Couldn't open \(name)", message: "The file couldn't be read, or it is larger than 200 MB.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {

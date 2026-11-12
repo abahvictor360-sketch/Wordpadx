@@ -2040,3 +2040,7 @@
 	Your system has animation effects turned on.	系统已打开动画效果。
 	Your system has animation effects turned off.	系统已关闭动画效果。
 	Your system doesn't report an animation setting, so animation effects stay on.	系统未提供动画设置，因此动画效果保持打开。
+	Convert PDF to Word	将 PDF 转换为 Word
+	Convert PDF to Word…	将 PDF 转换为 Word…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	将 PDF 作为可编辑文档打开；保存后存为 Word 文档 (.docx)。
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	已从 PDF 转换。保存后存为 Word 文档 (.docx)；PDF 不会更改。

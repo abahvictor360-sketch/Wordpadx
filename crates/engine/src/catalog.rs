@@ -10,6 +10,7 @@ use crate::Registry;
 pub const CATALOG: &str = "\
 File|Backstage|New|file.new
 File|Backstage|Open|file.open
+File|Backstage|Open PDF (PDF Reflow)|file.convertPdf
 File|Backstage|Save|file.save
 File|Backstage|Save As|file.saveAs
 File|Backstage|Print|file.print

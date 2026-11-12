@@ -2420,3 +2420,7 @@ preview	Title	Пример
 	Your system has animation effects turned on.	В системе эффекты анимации включены.
 	Your system has animation effects turned off.	В системе эффекты анимации выключены.
 	Your system doesn't report an animation setting, so animation effects stay on.	Система не сообщает о настройке анимации, поэтому эффекты анимации остаются включёнными.
+	Convert PDF to Word	Преобразовать PDF в Word
+	Convert PDF to Word…	Преобразовать PDF в Word…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Открывает PDF как редактируемый документ; при сохранении он остаётся документом Word (.docx).
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Преобразовано из PDF. При сохранении документ сохранится в формате Word (.docx); PDF не изменится.

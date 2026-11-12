@@ -2040,3 +2040,7 @@
 	Your system has animation effects turned on.	У вашій системі ефекти анімації ввімкнено.
 	Your system has animation effects turned off.	У вашій системі ефекти анімації вимкнено.
 	Your system doesn't report an animation setting, so animation effects stay on.	Система не повідомляє про налаштування анімації, тому ефекти анімації залишаються ввімкненими.
+	Convert PDF to Word	Перетворити PDF на Word
+	Convert PDF to Word…	Перетворити PDF на Word…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Відкриває PDF як документ, який можна редагувати; Зберегти зберігає його як документ Word (.docx).
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Перетворено з PDF. Зберегти зберігає документ як документ Word (.docx); PDF не змінюється.

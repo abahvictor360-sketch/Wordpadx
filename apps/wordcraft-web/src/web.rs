@@ -8,7 +8,7 @@ use wasm_bindgen::JsCast as _;
 use wordcraft_engine::Session;
 use wordcraft_ui_egui::{Inbox, Services, WordApp};
 
-const DOC_EXTS: &[&str] = &["docx", "docm", "dotx", "dotm", "doc", "dot", "odt", "rtf", "txt", "md", "html", "htm", "tex", "json", "xml"];
+const DOC_EXTS: &[&str] = &["docx", "docm", "dotx", "dotm", "doc", "dot", "odt", "rtf", "txt", "md", "html", "htm", "tex", "json", "xml", "pdf"];
 const IMAGE_EXTS: &[&str] = &["png", "jpg", "jpeg", "gif", "webp", "bmp"];
 const RECIPIENT_EXTS: &[&str] = &["csv", "tsv", "txt", "xlsx", "xlsm", "ods"];
 mod font_store;
@@ -49,6 +49,9 @@ pub fn start() {
                     let inbox: Inbox = Inbox::default();
                     if let Err(e) = listen_for_pasted_pictures(inbox.clone(), cc.egui_ctx.clone()) {
                         log::error!("pasting pictures is unavailable: {e}");
+                    }
+                    if let Err(e) = accept_files_from_host(inbox.clone(), cc.egui_ctx.clone()) {
+                        log::error!("opening files from the Android or iOS app is unavailable: {e}");
                     }
                     let doc = if query().contains("sample") { wordcraft_engine::sample::sample_document() } else { wordcraft_doc::Document::new() };
                     let mut app = WordApp::new(Session::new(doc), services(inbox.clone(), cc.egui_ctx.clone(), dirty));
@@ -152,6 +155,43 @@ fn listen_for_pasted_pictures(inbox: Inbox, ctx: egui::Context) -> Result<(), St
     Ok(())
 }
 
+/// Largest file the Android or iOS app may hand over ([`accept_files_from_host`]).
+const MAX_HOST_FILE_BYTES: usize = 200 << 20;
+
+/// `window.wordpadxOpenFile(name, data)`: how the Android and iOS apps open a document the user
+/// opened from another app ("Open with Wordpadx"). `data` is the file's bytes as base64 or a
+/// `Uint8Array`; the file arrives through the inbox like a dropped one. Returns whether it was
+/// accepted. The shells call it once the page has started the app (they retry until it exists).
+fn accept_files_from_host(inbox: Inbox, ctx: egui::Context) -> Result<(), String> {
+    let window = web_sys::window().ok_or("no window")?;
+    let open =
+        wasm_bindgen::closure::Closure::<dyn FnMut(String, wasm_bindgen::JsValue) -> bool>::new(move |name: String, data: wasm_bindgen::JsValue| {
+            let bytes = if let Some(b64) = data.as_string() {
+                if b64.len() / 4 * 3 > MAX_HOST_FILE_BYTES {
+                    log::warn!("{name} is larger than 200 MB; not opened");
+                    return false;
+                }
+                wordcraft_engine::cmd::insert::base64_decode(&b64)
+            } else if let Some(arr) = data.dyn_ref::<js_sys::Uint8Array>() {
+                (arr.length() as usize <= MAX_HOST_FILE_BYTES).then(|| arr.to_vec())
+            } else {
+                None
+            };
+            let Some(bytes) = bytes.filter(|b| !b.is_empty()) else {
+                log::error!("couldn't read {name} handed over by the app");
+                return false;
+            };
+            let name = if name.trim().is_empty() { "document.docx".to_string() } else { name };
+            inbox.lock().unwrap_or_else(|e| e.into_inner()).push((name, bytes));
+            ctx.request_repaint();
+            true
+        });
+    js_sys::Reflect::set(&window, &"wordpadxOpenFile".into(), open.as_ref()).map_err(|e| format!("{e:?}"))?;
+    // The function lives as long as the page.
+    open.forget();
+    Ok(())
+}
+
 /// `dirty` is the flag the `beforeunload` guard reads ([`guard_unload`]).
 fn services(inbox: Inbox, ctx: egui::Context, dirty: Rc<Cell<bool>>) -> Services {
     let open_inbox = inbox.clone();
@@ -163,6 +203,8 @@ fn services(inbox: Inbox, ctx: egui::Context, dirty: Rc<Cell<bool>>) -> Services
                 rfd::AsyncFileDialog::new().add_filter("Pictures", IMAGE_EXTS)
             } else if purpose == "font" {
                 rfd::AsyncFileDialog::new().add_filter("Fonts", wordcraft_fonts::FONT_FILE_EXTS)
+            } else if purpose == "pdf" {
+                rfd::AsyncFileDialog::new().add_filter("PDF", &["pdf"])
             } else if purpose == "recipients" {
                 rfd::AsyncFileDialog::new().add_filter("Recipient lists", RECIPIENT_EXTS)
             } else {

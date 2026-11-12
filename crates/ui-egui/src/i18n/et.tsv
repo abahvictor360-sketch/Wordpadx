@@ -2038,3 +2038,7 @@
 	Your system has animation effects turned on.	Süsteemis on animatsiooniefektid sisse lülitatud.
 	Your system has animation effects turned off.	Süsteemis on animatsiooniefektid välja lülitatud.
 	Your system doesn't report an animation setting, so animation effects stay on.	Süsteem ei teata animatsiooniseadet, seega jäävad animatsiooniefektid sisse.
+	Convert PDF to Word	Teisenda PDF Wordiks
+	Convert PDF to Word…	Teisenda PDF Wordiks…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Avab PDF-i muudetava dokumendina; Salvesta hoiab selle Wordi dokumendina (.docx).
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Teisendatud PDF-ist. Salvesta hoiab selle Wordi dokumendina (.docx); PDF jääb muutmata.

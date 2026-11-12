@@ -2029,3 +2029,7 @@
 	Your system has animation effects turned on.	系統已開啟動畫效果。
 	Your system has animation effects turned off.	系統已關閉動畫效果。
 	Your system doesn't report an animation setting, so animation effects stay on.	系統未提供動畫設定，因此動畫效果保持開啟。
+	Convert PDF to Word	將 PDF 轉換為 Word
+	Convert PDF to Word…	將 PDF 轉換為 Word…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	將 PDF 作為可編輯文件開啟；儲存後存為 Word 文件 (.docx)。
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	已從 PDF 轉換。儲存後存為 Word 文件 (.docx)；PDF 不會變更。

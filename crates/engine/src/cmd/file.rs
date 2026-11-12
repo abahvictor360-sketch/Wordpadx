@@ -29,6 +29,8 @@ pub(crate) fn set_author(s: &mut Session, v: &Value) -> CmdResult {
 pub fn specs() -> Vec<CommandSpec> {
     vec![
         CommandSpec::new("file.new", "New", "File", new).key("Mod+N").params(r#"{"template"?: "blank|sample|letter|resume|report"}"#).pure(),
+        CommandSpec::new("file.convertPdf", "Convert PDF to Word", "File › Open", convert_pdf)
+            .params(r#"{"path"?: "in.pdf", "data"?: base64, "out"?: "out.docx"}"#),
         CommandSpec::new("file.open", "Open", "File", open)
             .key("Mod+O / Mod+F12")
             .params(r#"{"path": string, "data"?: base64 (the file's bytes; `path` then only names it), "password"?: string (for a password-protected Word document)}"#)
@@ -139,12 +141,48 @@ fn open(s: &mut Session, v: &Value) -> CmdResult {
         crate::io::open_path_with(std::path::Path::new(path), password).map_err(CmdError::Failed)?
     };
     s.set_document(doc);
-    s.path = Some(path.into());
+    // A PDF is converted, not edited in place: the document saves as a Word document beside it
+    // (report.pdf → report.docx), never over the PDF, and closing asks to save it.
+    let converted = is_pdf_path(path);
+    s.path = Some(if converted { std::path::Path::new(path).with_extension("docx") } else { path.into() });
+    if converted {
+        s.dirty = true;
+    }
     // Like Word, a document opened with a password is saved with it again.
     if encrypted {
         s.password = password.map(crate::io::Password::new);
     }
-    Ok(json!({"path": path, "paragraphs": s.doc.paragraph_count(), "words": s.doc.word_count(), "encrypted": encrypted}))
+    Ok(json!({
+        "path": s.path.as_ref().map(|p| p.to_string_lossy().to_string()),
+        "paragraphs": s.doc.paragraph_count(),
+        "words": s.doc.word_count(),
+        "encrypted": encrypted,
+        "convertedFromPdf": converted,
+    }))
+}
+
+/// Does `path` name a PDF (by extension)?
+fn is_pdf_path(path: &str) -> bool {
+    std::path::Path::new(path).extension().and_then(|e| e.to_str()).is_some_and(|e| e.eq_ignore_ascii_case("pdf"))
+}
+
+/// Convert PDF to Word: open a PDF as an editable document (`path`, with `data` as base64 when
+/// the file isn't on disk) and, with `out`, save it there as a Word document. Without `path` the
+/// app asks for a PDF.
+fn convert_pdf(s: &mut Session, v: &Value) -> CmdResult {
+    let Some(path) = p::str(v, "path") else {
+        s.ui_requests.push(json!({"open": "convertPdf"}));
+        return sel_result(s);
+    };
+    if !is_pdf_path(path) {
+        return Err(CmdError::Params("`path` must be a .pdf file".into()));
+    }
+    let opened = open(s, v)?;
+    let Some(out) = p::str(v, "out") else { return Ok(opened) };
+    if !crate::io::is_word_package(&std::path::Path::new(out).extension().and_then(|e| e.to_str()).unwrap_or("").to_ascii_lowercase()) {
+        return Err(CmdError::Params("`out` must be a Word document (.docx, .docm, .dotx, .dotm)".into()));
+    }
+    save(s, &json!({"path": out}))
 }
 
 /// File › Info › Protect Document › Encrypt with Password: the password Word documents are saved

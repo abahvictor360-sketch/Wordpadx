@@ -8,3 +8,7 @@ plan/
 /.claude/
 /target-*/
 /craft-fonts/
+
+# Web bundle copied into the mobile apps at build time (packaging/*/build.sh, CI)
+/mobile/ios/Wordpadx/www/
+/mobile/android/app/src/main/assets/www/

@@ -18,6 +18,14 @@ jobs:
       github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
     steps:
+      - name: Check out the built commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          sparse-checkout: |
+            Cargo.toml
+          sparse-checkout-cone-mode: false
+
       - name: Download Android artifact
         uses: actions/download-artifact@v4
         with:
@@ -36,18 +44,31 @@ jobs:
           repository: ${{ github.repository }}
           run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Publish prerelease
+      # The first successful build of a new version (Cargo.toml) is published as that version's
+      # release and marked latest, so the website's "latest" download links serve it; later builds
+      # of the same version are prereleases.
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
-          tag="v0.5.0-build.${RUN_NUMBER}"
-          gh release create "$tag" \
-            release-assets/android/app-debug.apk#Wordpadx-Android-Tablet.apk \
-            release-assets/ios/Wordpadx-iPad.zip \
-            --repo "$GITHUB_REPOSITORY" \
-            --target "$HEAD_SHA" \
-            --title "Wordpadx build ${RUN_NUMBER}" \
-            --notes "Automatically published from successful mobile build ${RUN_NUMBER}." \
-            --prerelease
+          version=$(sed -n '/^\[workspace.package\]/,/^\[/{s/^version *= *"\(.*\)"/\1/p}' Cargo.toml | head -1)
+          if [ -z "$version" ]; then echo "::error::no [workspace.package] version in Cargo.toml"; exit 1; fi
+          assets=(release-assets/android/app-debug.apk release-assets/ios/Wordpadx-iPad.zip)
+          if gh release view "v$version" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            tag="v$version-build.${RUN_NUMBER}"
+            gh release create "$tag" "${assets[@]}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$HEAD_SHA" \
+              --title "Wordpadx build ${RUN_NUMBER}" \
+              --notes "Automatically published from successful mobile build ${RUN_NUMBER} (version $version)." \
+              --prerelease
+          else
+            gh release create "v$version" "${assets[@]}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$HEAD_SHA" \
+              --title "Wordpadx $version" \
+              --notes "Wordpadx $version for Android (app-debug.apk, debug-signed) and iPhone/iPad (Wordpadx-iPad.zip, unsigned). The web app is at https://abahvictor360-sketch.github.io/Wordpadx/app/. What's new: see the progress log in ROADMAP.md." \
+              --latest
+          fi

@@ -2042,3 +2042,7 @@
 	Your system has animation effects turned on.	Sisteminizde animasyon efektleri açık.
 	Your system has animation effects turned off.	Sisteminizde animasyon efektleri kapalı.
 	Your system doesn't report an animation setting, so animation effects stay on.	Sisteminiz bir animasyon ayarı bildirmiyor, bu nedenle animasyon efektleri açık kalır.
+	Convert PDF to Word	PDF'yi Word'e Dönüştür
+	Convert PDF to Word…	PDF'yi Word'e Dönüştür…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Bir PDF'yi düzenlenebilir belge olarak açar; Kaydet onu Word belgesi (.docx) olarak saklar.
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	PDF'den dönüştürüldü. Kaydet onu Word belgesi (.docx) olarak saklar; PDF değişmez.

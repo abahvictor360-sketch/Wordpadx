@@ -11,9 +11,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = ViewController()
+        let controller = ViewController()
+        window.rootViewController = controller
         self.window = window
         window.makeKeyAndVisible()
+        // Launched by opening a document from Files or another app ("Open in Wordpadx").
+        for context in connectionOptions.urlContexts {
+            controller.openDocument(at: context.url)
+        }
+    }
+
+    /// A document opened from Files or another app while Wordpadx is running.
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let controller = window?.rootViewController as? ViewController else { return }
+        for context in URLContexts {
+            controller.openDocument(at: context.url)
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {}
