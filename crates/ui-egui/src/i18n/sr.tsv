@@ -2042,3 +2042,7 @@
 	Your system has animation effects turned on.	У систему су ефекти анимације укључени.
 	Your system has animation effects turned off.	У систему су ефекти анимације искључени.
 	Your system doesn't report an animation setting, so animation effects stay on.	Систем не пријављује подешавање анимације, па ефекти анимације остају укључени.
+	Convert PDF to Word	Претвори PDF у Word
+	Convert PDF to Word…	Претвори PDF у Word…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Отвара PDF као документ који се може уређивати; Сачувај га чува као Word документ (.docx).
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Претворено из PDF-а. Сачувај га чува као Word документ (.docx); PDF се не мења.

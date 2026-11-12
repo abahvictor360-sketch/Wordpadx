@@ -2040,3 +2040,7 @@
 	Your system has animation effects turned on.	Seu sistema está com os efeitos de animação ativados.
 	Your system has animation effects turned off.	Seu sistema está com os efeitos de animação desativados.
 	Your system doesn't report an animation setting, so animation effects stay on.	Seu sistema não informa uma configuração de animação, então os efeitos de animação continuam ativados.
+	Convert PDF to Word	Converter PDF em Word
+	Convert PDF to Word…	Converter PDF em Word…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Abre um PDF como documento editável; Salvar o mantém como documento do Word (.docx).
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Convertido de PDF. Salvar o mantém como documento do Word (.docx); o PDF não é alterado.

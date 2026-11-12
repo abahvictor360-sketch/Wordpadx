@@ -322,7 +322,7 @@ fn family_name(ps: &str) -> Option<String> {
     let name = ps.split_once('+').filter(|(tag, _)| tag.len() == 6 && tag.chars().all(|c| c.is_ascii_uppercase())).map_or(ps, |(_, n)| n);
     let base = name.split(['-', ',']).next().unwrap_or(name);
     let base = ["PSMT", "MT", "PS", "Std", "Pro", "LT"].iter().fold(base.to_string(), |b, s| b.strip_suffix(s).map(str::to_string).unwrap_or(b));
-    let base = ["Bold", "Italic", "Regular", "Roman", "Oblique", "Medium", "Light", "Semibold", "SemiBold", "Black"]
+    let base = ["Bold", "Italic", "Regular", "Oblique", "Medium", "Light", "Semibold", "SemiBold", "Black"]
         .iter()
         .fold(base, |b, s| if b.len() > s.len() + 2 { b.strip_suffix(s).map(str::to_string).unwrap_or(b) } else { b });
     let standard = match base.as_str() {

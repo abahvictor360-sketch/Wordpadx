@@ -2028,3 +2028,7 @@
 	Your system has animation effects turned on.	システムのアニメーション効果はオンです。
 	Your system has animation effects turned off.	システムのアニメーション効果はオフです。
 	Your system doesn't report an animation setting, so animation effects stay on.	システムからアニメーションの設定を取得できないため、アニメーション効果はオンのままです。
+	Convert PDF to Word	PDF を Word に変換
+	Convert PDF to Word…	PDF を Word に変換…
+	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	PDF を編集可能な文書として開きます。保存すると Word 文書 (.docx) として残ります。
+	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	PDF から変換しました。保存すると Word 文書 (.docx) として残ります。PDF は変更されません。
