@@ -64,6 +64,10 @@ under `/app/`, and publishes each successful build as a `v0.5.0-build.N` prerele
   F4 repeats, F7 checks spelling.
 - **Your files.** Opens and saves .docx, .odt, .rtf, .html, .md, .tex and .txt; opens Word 97-2003
   .doc; exports PDF with selectable text, links and bookmarks.
+- **PDF to Word.** Open a PDF (File › Open › *Convert PDF to Word…*, or "Open with" on your phone) and
+  it becomes an editable document: paragraphs, headings, bullet lists, tables, bold, italic, colours
+  and pictures. Save keeps it as a .docx beside the PDF, which is never changed. Scanned PDFs keep
+  their pages as pictures (no text recognition yet).
 - **Made for phones and tablets.** A native Android app, an iPhone and iPad app and an installable web
   app from the same build. On a phone, in portrait or on its side, the text wraps to the screen (Web
   Layout), the rulers hide and the title and status bars shrink; the ribbon's tab strip scrolls, and
@@ -143,6 +147,7 @@ open `mobile/ios/Wordpadx.xcodeproj` and choose your iPad or a simulator.
 
 ```sh
 wordcraft-cli convert report.docx report.pdf        # docx, pdf, odt, rtf, html, md, tex, txt, png
+wordcraft-cli convert scan.pdf scan.docx            # PDF to Word
 wordcraft-cli text report.docx                      # plain text
 wordcraft-cli inspect report.docx                   # structure as JSON
 wordcraft-cli run --template sample \

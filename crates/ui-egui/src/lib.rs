@@ -549,6 +549,10 @@ impl WordApp {
         if id == "file.accessibility" && r.is_ok() {
             self.session.view.accessibility_pane = true;
         }
+        // Convert PDF to Word: say what happened and how to keep it.
+        if matches!(id, "file.open" | "file.convertPdf") && r.as_ref().is_ok_and(|v| v["convertedFromPdf"] == true) {
+            self.status(tl!("Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed."));
+        }
         // Match Fields and Check for Errors show what they found.
         if let Ok(v) = &r
             && let Some(d) = dialogs::Dialog::report(id, v)
@@ -790,6 +794,7 @@ impl WordApp {
         if let Some(what) = req.get("open").and_then(Value::as_str) {
             match what {
                 "openFile" => self.open_dialog(),
+                "convertPdf" => self.pick_pdf(),
                 "saveAs" => {
                     self.save_as_dialog();
                 }

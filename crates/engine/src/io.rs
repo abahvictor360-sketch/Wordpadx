@@ -26,6 +26,8 @@ pub const OPEN_EXTS: &[&str] = &[
     "xml",
     "wcraft.json",
     "json",
+    // Converted to an editable document (PDF to Word); saving writes a Word document.
+    "pdf",
 ];
 /// Formats WordCraft saves (Save As).
 pub const SAVE_EXTS: &[&str] = &["docx", "docm", "dotx", "dotm", "pdf", "txt", "md", "html", "rtf", "odt", "tex", "png", "json", "xml"];
@@ -139,6 +141,8 @@ fn open_by_content(name: &str, ext: &str, bytes: &[u8], password: Option<&str>) 
         (wordcraft_docx::read(bytes).map_err(|e| format!("{name}: not a document WordCraft can open ({e})"))?, false)
     } else if bytes.starts_with(OLE) {
         (wordcraft_docbin::read(bytes).map_err(|e| format!("{name}: not a document WordCraft can open ({e})"))?, false)
+    } else if wordcraft_formats::pdf::is_pdf(bytes) {
+        (wordcraft_formats::pdf::import(bytes).map_err(|e| format!("{name}: {e}"))?, false)
     } else if bytes.starts_with(b"{\\rtf") {
         (wordcraft_formats::rtf::import(bytes)?, false)
     } else if wordcraft_formats::txt::is_text(bytes) {

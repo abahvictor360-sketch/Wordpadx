@@ -15,6 +15,7 @@ pub mod latex;
 pub mod markdown;
 pub mod model;
 pub mod odt;
+pub mod pdf;
 pub mod rtf;
 pub mod sheet;
 pub mod txt;
@@ -34,6 +35,7 @@ pub fn import(ext: &str, bytes: &[u8]) -> Option<Result<Document, String>> {
         "rtf" => rtf::import(bytes),
         "odt" => odt::import(bytes),
         "tex" | "latex" | "ltx" => Ok(latex::import(bytes)),
+        "pdf" => pdf::import(bytes),
         _ => return None,
     };
     Some(r.map(|mut d| {

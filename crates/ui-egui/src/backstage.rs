@@ -254,9 +254,18 @@ fn open_list(app: &mut WordApp, ui: &mut Ui) {
 
 fn open_page(app: &mut WordApp, ui: &mut Ui) {
     heading(ui, "Open");
-    if ui.button(egui::RichText::new(tl!("Browse…")).font(medium(14.0))).clicked() {
-        let _ = app.run("ui.openFileDialog", json!({}));
-    }
+    ui.horizontal(|ui| {
+        if ui.button(egui::RichText::new(tl!("Browse…")).font(medium(14.0))).clicked() {
+            let _ = app.run("ui.openFileDialog", json!({}));
+        }
+        if ui
+            .button(egui::RichText::new(tl!("Convert PDF to Word…")).font(medium(14.0)))
+            .on_hover_text(tl!("Open a PDF as an editable document; Save keeps it as a Word document (.docx)."))
+            .clicked()
+        {
+            let _ = app.run("file.convertPdf", json!({}));
+        }
+    });
     // Linux and the BSDs (#576): the system dialog needs a file chooser portal or zenity; when it
     // doesn't show up, WordCraft's own browser is always one click away.
     #[cfg(all(unix, not(target_os = "macos"), not(target_arch = "wasm32")))]
