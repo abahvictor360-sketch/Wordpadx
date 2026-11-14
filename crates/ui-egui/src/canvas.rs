@@ -55,6 +55,14 @@ pub struct CanvasState {
     /// Document faces added to the interface fonts to draw the input method's composition (#565).
     pub(crate) ime_faces: Vec<std::sync::Arc<wordcraft_fonts::FontFace>>,
     pub want_focus: bool,
+    /// Touch on the page: a finger scrolls, a tap places the caret ([`crate::touch`]).
+    pub touch: crate::touch::TouchPan,
+    /// This is a touch screen (a touch was seen, or the browser says the pointer is a finger):
+    /// the page takes keyboard focus only when tapped, since focus brings up the on-screen
+    /// keyboard. Opening a document or leaving File doesn't.
+    pub touch_device: bool,
+    /// A tap asked for keyboard focus (next frame).
+    tap_focus: bool,
     pub context_issue: Option<serde_json::Value>,
     pub context_synonyms: Option<serde_json::Value>,
     /// The right-click context menu is open (the mini toolbar stands down while it is).
@@ -135,6 +143,9 @@ impl Default for CanvasState {
             ime_preedit: String::new(),
             ime_faces: Vec::new(),
             want_focus: true,
+            touch: Default::default(),
+            touch_device: false,
+            tap_focus: false,
             context_issue: None,
             context_synonyms: None,
             obj_drag: None,
@@ -584,18 +595,31 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
     } else {
         egui::Vec2::ZERO
     };
-    let delta = wheel_delta + auto_delta;
+    // A finger dragged on the page scrolls it (with momentum after a flick); a tap is handled after
+    // layout, below.
+    let touch = ui.input(|i| app.canvas.touch.update(&i.events, area, i.time, i.stable_dt));
+    if ui.input(|i| i.events.iter().any(|e| matches!(e, egui::Event::Touch { .. }))) {
+        app.canvas.touch_device = true;
+    }
+    if touch.scroll != egui::Vec2::ZERO || app.canvas.touch.is_flinging() {
+        ui.ctx().request_repaint();
+    }
+    let delta = wheel_delta + auto_delta + touch.scroll;
     let mut scroll_area = egui::ScrollArea::both()
         .id_salt("canvas_scroll")
         .auto_shrink([false, false])
         // Bringing the caret into view glides there, or jumps with animation effects off.
         .animated(animate)
-        .scroll_source(egui::scroll_area::ScrollSource { mouse_wheel: false, ..Default::default() });
+        // Wheel, touchpad and touch scrolling are the canvas's own (above).
+        .scroll_source(egui::scroll_area::ScrollSource { mouse_wheel: false, drag: egui::scroll_area::DragScroll::Never, ..Default::default() });
     if delta != egui::Vec2::ZERO {
         let before = app.canvas.scroll_offset;
         let after = clamped_scroll(before, delta, app.canvas.scroll_max);
         if after == before && wheel_delta != egui::Vec2::ZERO {
             app.canvas.wheel.hit_edge();
+        }
+        if after == before && touch.scroll != egui::Vec2::ZERO {
+            app.canvas.touch.stop();
         }
         if auto_delta != egui::Vec2::ZERO && after != before {
             // The scroll keeps going without new input.
@@ -914,10 +938,13 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
     if app.canvas.balloon.is_some() && ui.input(|i| i.pointer.any_pressed()) && resp.contains_pointer() {
         deselect_balloon(app, ui.ctx());
     }
-    // Focus: the canvas takes keyboard focus on click and keeps Tab/arrows.
-    if resp.clicked() || resp.drag_started() || app.canvas.want_focus {
+    // Focus: the canvas takes keyboard focus on click and keeps Tab/arrows. On a touch screen focus
+    // brings up the on-screen keyboard, so only a tap on the page takes it: not a finger scrolling,
+    // and not the app on its own (starting, opening a document, leaving File).
+    let touching = app.canvas.touch.in_gesture();
+    let asked = std::mem::take(&mut app.canvas.want_focus) && !app.canvas.touch_device;
+    if (!touching && (resp.clicked() || resp.drag_started())) || asked || std::mem::take(&mut app.canvas.tap_focus) {
         resp.request_focus();
-        app.canvas.want_focus = false;
     }
     if resp.has_focus() {
         ui.memory_mut(|m| {
@@ -927,6 +954,12 @@ pub fn show(app: &mut WordApp, ui: &mut Ui) {
     app.canvas.focused = resp.has_focus();
     // Screen readers: the document under the canvas, with the caret (#488).
     crate::a11y::expose(app, ui.ctx(), resp.id, &layout, &rects, area);
+    // Touch: the gesture is the finger's (scroll or tap), not a mouse click or drag-select.
+    if touching {
+        if let Some((p, double)) = touch.tap {
+            tap(app, &layout, &rects, geo.scale, p, double);
+        }
+    } else
     // Double-click the space between two pages (or the line between them) to hide or show it.
     if resp.double_clicked()
         && app.session.view.mode == wordcraft_layout::ViewMode::Print
@@ -1358,6 +1391,24 @@ fn edge_scroll(p: f32, lo: f32, hi: f32, dt: f32) -> f32 {
 /// scrollable range, so a document shorter than the viewport never moves.
 fn clamped_scroll(before: egui::Vec2, delta: egui::Vec2, max: egui::Vec2) -> egui::Vec2 {
     (before - delta).clamp(egui::Vec2::ZERO, max)
+}
+
+/// A tap on the page: select the picture or shape there, or put the caret there (a double tap
+/// selects the word), and take keyboard focus, which brings up the on-screen keyboard.
+fn tap(app: &mut WordApp, layout: &DocLayout, rects: &[Rect], scale: f32, p: egui::Pos2, double: bool) {
+    if crate::objects::select_at(app, layout, rects, scale, p) {
+        return;
+    }
+    let Some((page, x, y)) = page_at(rects, layout, scale, p) else { return };
+    if let Some(pos) = layout.hit(page, x, y, app.session.sel.focus.story) {
+        app.session.sel = wordcraft_engine::Selection::caret(pos);
+        app.session.page_hint = page;
+        app.canvas.caret_visible_since = crate::now_ms();
+        if double {
+            let _ = app.run("select.word", json!({}));
+        }
+    }
+    app.canvas.tap_focus = true;
 }
 
 fn mouse(app: &mut WordApp, ui: &Ui, resp: &egui::Response, rects: &[Rect], layout: &DocLayout, scale: f32) {

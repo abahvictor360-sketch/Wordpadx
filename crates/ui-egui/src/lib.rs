@@ -61,6 +61,7 @@ pub mod scroll;
 pub mod table_pen;
 pub mod table_resize;
 pub mod theme;
+pub mod touch;
 pub mod widgets;
 pub mod window_geometry;
 pub mod wordart_menus;
@@ -1831,6 +1832,66 @@ mod tests {
         }
         a.run("view.zoom100", json!({})).unwrap();
         assert!((frame(&mut a) - 1.0).abs() < 1e-3);
+    }
+
+    /// A finger dragged on the page scrolls it without selecting text or taking keyboard focus
+    /// (focus brings up the on-screen keyboard); a tap places the caret and takes focus. The app
+    /// doesn't take focus on its own on a touch screen.
+    #[test]
+    fn touch_drag_scrolls_without_the_keyboard_and_a_tap_brings_it() {
+        let ctx = egui::Context::default();
+        let mut a = WordApp::new(Session::new(wordcraft_engine::sample::sample_document()), Services::default());
+        a.canvas.touch_device = true;
+        let screen = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(390.0, 844.0));
+        let mut t = 0.0;
+        let mut frame = |a: &mut WordApp, events: Vec<egui::Event>| {
+            t += 1.0 / 60.0;
+            let input = egui::RawInput { events, time: Some(t), screen_rect: Some(screen), ..Default::default() };
+            ctx.run_ui(input, |ui| {
+                a.logic(ui.ctx());
+                a.ui(ui);
+            })
+            .drop_without_applying_deltas();
+        };
+        for _ in 0..4 {
+            frame(&mut a, Vec::new());
+        }
+        assert!(!a.canvas.focused, "no keyboard at startup on a touch screen");
+        let page = a.canvas.canvas_rect.unwrap();
+        // eframe reports a touch as a touch event and as the primary button.
+        let touch = |phase, p: egui::Pos2| {
+            let mut v = vec![egui::Event::Touch { device_id: egui::TouchDeviceId(1), id: egui::TouchId(7), phase, pos: p, force: None }];
+            match phase {
+                egui::TouchPhase::Start => v.extend([
+                    egui::Event::PointerMoved(p),
+                    egui::Event::PointerButton { pos: p, button: egui::PointerButton::Primary, pressed: true, modifiers: Default::default() },
+                ]),
+                egui::TouchPhase::Move => v.push(egui::Event::PointerMoved(p)),
+                _ => {
+                    v.push(egui::Event::PointerButton { pos: p, button: egui::PointerButton::Primary, pressed: false, modifiers: Default::default() })
+                }
+            }
+            v
+        };
+        let sel = a.session.sel.clone();
+        let start = a.canvas.scroll_offset.y;
+        let mut p = egui::pos2(page.center().x, page.max.y - 60.0);
+        frame(&mut a, touch(egui::TouchPhase::Start, p));
+        for _ in 0..10 {
+            p.y -= 30.0;
+            frame(&mut a, touch(egui::TouchPhase::Move, p));
+        }
+        frame(&mut a, touch(egui::TouchPhase::End, p));
+        assert!(a.canvas.scroll_offset.y > start + 200.0, "the page followed the finger: {} → {}", start, a.canvas.scroll_offset.y);
+        assert!(!a.canvas.focused, "scrolling doesn't bring up the keyboard");
+        assert_eq!(a.session.sel, sel, "nor select text");
+        // A tap on the text puts the caret there and takes focus.
+        let tap = egui::pos2(page.center().x, page.min.y + page.height() * 0.4);
+        frame(&mut a, touch(egui::TouchPhase::Start, tap));
+        frame(&mut a, touch(egui::TouchPhase::End, tap));
+        frame(&mut a, Vec::new());
+        assert!(a.canvas.focused, "a tap brings up the keyboard");
+        assert_ne!(a.session.sel, sel, "and moves the caret");
     }
 
     /// Issue #122: touchpad deltas scroll the page 1:1 at once; a wheel notch eases in to about

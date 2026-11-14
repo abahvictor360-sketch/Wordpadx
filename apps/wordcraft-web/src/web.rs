@@ -56,6 +56,12 @@ pub fn start() {
                     let doc = if query().contains("sample") { wordcraft_engine::sample::sample_document() } else { wordcraft_doc::Document::new() };
                     let mut app = WordApp::new(Session::new(doc), services(inbox.clone(), cc.egui_ctx.clone(), dirty));
                     app.autosave = false;
+                    // A phone or tablet: the page takes keyboard focus (and so brings up the
+                    // on-screen keyboard) only when tapped, not on its own at startup.
+                    let coarse = web_sys::window().and_then(|w| w.match_media("(pointer: coarse)").ok().flatten()).is_some_and(|q| q.matches());
+                    if coarse {
+                        app.canvas.touch_device = true;
+                    }
                     Ok(Box::new(WebShell { app, inbox }))
                 }),
             )
