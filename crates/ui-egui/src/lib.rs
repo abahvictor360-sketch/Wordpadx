@@ -61,6 +61,8 @@ pub mod scroll;
 pub mod table_pen;
 pub mod table_resize;
 pub mod theme;
+pub mod touch;
+pub mod update;
 pub mod widgets;
 pub mod window_geometry;
 pub mod wordart_menus;
@@ -115,6 +117,13 @@ pub struct Services {
     /// Web: keep a font the user added (stored file name, original bytes) for the next visit
     /// (#582). Desktop fonts are stored by the font database itself, in the app's font folder.
     pub store_font: Option<Box<dyn Fn(&str, &[u8])>>,
+    /// Look up the latest release and put it in `update_slot` ([`update`]); the web app, and so
+    /// the Android and iOS apps, has one. Without it the app never checks.
+    pub check_update: Option<Box<dyn Fn()>>,
+    /// Where `check_update` puts its answer.
+    pub update_slot: Option<update::UpdateSlot>,
+    /// Reload the app into a new version (the web app).
+    pub reload: Option<Box<dyn Fn()>>,
     /// Web: forget a stored font (its stored file name) once the user removes it.
     pub forget_font: Option<Box<dyn Fn(&str)>>,
 }
@@ -316,6 +325,8 @@ pub struct WordApp {
     /// File ▸ Options: load the installed CJK fallback font if no embedded face covers it.
     pub(crate) want_system_cjk: bool,
     fonts_frames: u32,
+    /// Update notifications ([`update`]).
+    pub(crate) update: update::UpdateUi,
     /// The window is phone-sized ([`PHONE_MAX_WIDTH`], [`PHONE_MAX_HEIGHT`]): compact chrome, no
     /// rulers, text wrapped to the screen.
     pub(crate) phone: bool,
@@ -413,6 +424,7 @@ impl WordApp {
             want_system_cjk: false,
             fonts_frames: 0,
             phone: false,
+            update: Default::default(),
             phone_reflowed: false,
             page_auto_fit: false,
             applied_theme: None,
@@ -894,6 +906,8 @@ impl WordApp {
                 self.pick_picture();
                 json!({"pending": self.change_picture_target.is_some()})
             }
+            // Help › Check for Updates: ask now; the answer shows in the update bar or status bar.
+            "ui.checkForUpdates" => json!({"checking": self.check_for_update(true)}),
             "ui.collapseRibbon" => {
                 self.ui.ribbon_collapsed = !self.ui.ribbon_collapsed;
                 json!({"collapsed": self.ui.ribbon_collapsed})
@@ -1136,6 +1150,11 @@ impl WordApp {
         let lang = i18n::Lang::from_pref(&self.ui.language);
         i18n::set_current(lang);
         options::sync(self);
+        self.update_tick(now_ms());
+        // Wake up for the first update check even if nothing else draws a frame.
+        if self.services.check_update.is_some() && self.update.first_check_pending() {
+            ctx.request_repaint_after(std::time::Duration::from_secs(5));
+        }
         // Chinese text wants the Chinese face before the Japanese one (one glyph style per line).
         // An installed CJK font is read only once CJK text is shown (#241): never for an English
         // interface that doesn't open the language list.
@@ -1315,6 +1334,7 @@ impl WordApp {
         } else {
             chrome::title_bar(self, ui);
             ribbon::show(self, ui);
+            update::bar(self, ui);
             chrome::status_bar(self, ui);
             panes::show(self, ui);
             egui::CentralPanel::default().frame(egui::Frame::NONE.fill(t.canvas)).show(ui, |ui| {
@@ -1831,6 +1851,66 @@ mod tests {
         }
         a.run("view.zoom100", json!({})).unwrap();
         assert!((frame(&mut a) - 1.0).abs() < 1e-3);
+    }
+
+    /// A finger dragged on the page scrolls it without selecting text or taking keyboard focus
+    /// (focus brings up the on-screen keyboard); a tap places the caret and takes focus. The app
+    /// doesn't take focus on its own on a touch screen.
+    #[test]
+    fn touch_drag_scrolls_without_the_keyboard_and_a_tap_brings_it() {
+        let ctx = egui::Context::default();
+        let mut a = WordApp::new(Session::new(wordcraft_engine::sample::sample_document()), Services::default());
+        a.canvas.touch_device = true;
+        let screen = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(390.0, 844.0));
+        let mut t = 0.0;
+        let mut frame = |a: &mut WordApp, events: Vec<egui::Event>| {
+            t += 1.0 / 60.0;
+            let input = egui::RawInput { events, time: Some(t), screen_rect: Some(screen), ..Default::default() };
+            ctx.run_ui(input, |ui| {
+                a.logic(ui.ctx());
+                a.ui(ui);
+            })
+            .drop_without_applying_deltas();
+        };
+        for _ in 0..4 {
+            frame(&mut a, Vec::new());
+        }
+        assert!(!a.canvas.focused, "no keyboard at startup on a touch screen");
+        let page = a.canvas.canvas_rect.unwrap();
+        // eframe reports a touch as a touch event and as the primary button.
+        let touch = |phase, p: egui::Pos2| {
+            let mut v = vec![egui::Event::Touch { device_id: egui::TouchDeviceId(1), id: egui::TouchId(7), phase, pos: p, force: None }];
+            match phase {
+                egui::TouchPhase::Start => v.extend([
+                    egui::Event::PointerMoved(p),
+                    egui::Event::PointerButton { pos: p, button: egui::PointerButton::Primary, pressed: true, modifiers: Default::default() },
+                ]),
+                egui::TouchPhase::Move => v.push(egui::Event::PointerMoved(p)),
+                _ => {
+                    v.push(egui::Event::PointerButton { pos: p, button: egui::PointerButton::Primary, pressed: false, modifiers: Default::default() })
+                }
+            }
+            v
+        };
+        let sel = a.session.sel.clone();
+        let start = a.canvas.scroll_offset.y;
+        let mut p = egui::pos2(page.center().x, page.max.y - 60.0);
+        frame(&mut a, touch(egui::TouchPhase::Start, p));
+        for _ in 0..10 {
+            p.y -= 30.0;
+            frame(&mut a, touch(egui::TouchPhase::Move, p));
+        }
+        frame(&mut a, touch(egui::TouchPhase::End, p));
+        assert!(a.canvas.scroll_offset.y > start + 200.0, "the page followed the finger: {} → {}", start, a.canvas.scroll_offset.y);
+        assert!(!a.canvas.focused, "scrolling doesn't bring up the keyboard");
+        assert_eq!(a.session.sel, sel, "nor select text");
+        // A tap on the text puts the caret there and takes focus.
+        let tap = egui::pos2(page.center().x, page.min.y + page.height() * 0.4);
+        frame(&mut a, touch(egui::TouchPhase::Start, tap));
+        frame(&mut a, touch(egui::TouchPhase::End, tap));
+        frame(&mut a, Vec::new());
+        assert!(a.canvas.focused, "a tap brings up the keyboard");
+        assert_ne!(a.session.sel, sel, "and moves the caret");
     }
 
     /// Issue #122: touchpad deltas scroll the page 1:1 at once; a wheel notch eases in to about

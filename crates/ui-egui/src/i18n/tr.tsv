@@ -2046,3 +2046,13 @@
 	Convert PDF to Word…	PDF'yi Word'e Dönüştür…
 	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Bir PDF'yi düzenlenebilir belge olarak açar; Kaydet onu Word belgesi (.docx) olarak saklar.
 	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	PDF'den dönüştürüldü. Kaydet onu Word belgesi (.docx) olarak saklar; PDF değişmez.
+	Check for\nUpdates	Güncellemeleri\ndenetle
+	Wordpadx {version} is available.	Wordpadx {version} kullanılabilir.
+	Reload to update	Güncellemek için yeniden yükle
+	Update	Güncelle
+	What's new	Yenilikler
+	Later	Daha sonra
+	Checking for updates…	Güncellemeler denetleniyor…
+	Wordpadx {version} is the latest version.	Wordpadx {version} en son sürüm.
+	Couldn't check for updates. Check your internet connection and try again.	Güncellemeler denetlenemedi. İnternet bağlantınızı kontrol edip yeniden deneyin.
+	This version of Wordpadx can't check for updates. See the Releases page on GitHub.	Wordpadx'in bu sürümü güncellemeleri denetleyemez. GitHub'daki Releases sayfasına bakın.

@@ -1,5 +1,5 @@
 // Wordpadx PWA Service Worker for offline and cached execution on iPad and Android Tablets
-const CACHE_NAME = 'wordpadx-app-v2';
+const CACHE_NAME = 'wordpadx-app-v3';
 const ASSETS_TO_CACHE = [
   './',
   'index.html',
@@ -29,6 +29,24 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   // Pass through cross-origin or non-GET requests directly
   if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // The page itself: the network first, so a reload (Update) loads a new version as soon as it
+  // is published; the cached copy when offline.
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const copy = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return networkResponse;
+      }).catch(() => caches.match(event.request)
+        .then((page) => page || caches.match('./'))
+        .then((page) => page || caches.match('index.html'))
+        .then((page) => page || Response.error()))
+    );
     return;
   }
 

@@ -70,8 +70,27 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UIDo
         }
     }
 
+    /// Links out of the app (an update's download, a hyperlink in a document) open in Safari.
+    private func openOutside(_ url: URL) -> Bool {
+        guard let scheme = url.scheme?.lowercased(), ["http", "https", "mailto"].contains(scheme) else { return false }
+        UIApplication.shared.open(url)
+        return true
+    }
+
+    /// `window.open(url, "_blank")`: no second web view; the link opens in Safari.
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if let url = navigationAction.request.url {
+            _ = openOutside(url)
+        }
+        return nil
+    }
+
     // Handle iPad document downloads and file sharing
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if let url = navigationAction.request.url, url.scheme != "file", url.scheme != "blob", url.scheme != "about", openOutside(url) {
+            decisionHandler(.cancel)
+            return
+        }
         if let url = navigationAction.request.url {
             if url.scheme == "blob" || url.pathExtension == "docx" || url.pathExtension == "pdf" {
                 // Allow action

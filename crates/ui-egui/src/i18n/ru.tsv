@@ -2424,3 +2424,13 @@ preview	Title	Пример
 	Convert PDF to Word…	Преобразовать PDF в Word…
 	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Открывает PDF как редактируемый документ; при сохранении он остаётся документом Word (.docx).
 	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Преобразовано из PDF. При сохранении документ сохранится в формате Word (.docx); PDF не изменится.
+	Check for\nUpdates	Проверить\nобновления
+	Wordpadx {version} is available.	Доступна версия Wordpadx {version}.
+	Reload to update	Перезагрузить для обновления
+	Update	Обновить
+	What's new	Что нового
+	Later	Позже
+	Checking for updates…	Проверка обновлений…
+	Wordpadx {version} is the latest version.	Wordpadx {version} — последняя версия.
+	Couldn't check for updates. Check your internet connection and try again.	Не удалось проверить обновления. Проверьте подключение к интернету и повторите попытку.
+	This version of Wordpadx can't check for updates. See the Releases page on GitHub.	Эта версия Wordpadx не может проверять обновления. Откройте страницу Releases на GitHub.

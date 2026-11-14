@@ -56,6 +56,12 @@ pub fn start() {
                     let doc = if query().contains("sample") { wordcraft_engine::sample::sample_document() } else { wordcraft_doc::Document::new() };
                     let mut app = WordApp::new(Session::new(doc), services(inbox.clone(), cc.egui_ctx.clone(), dirty));
                     app.autosave = false;
+                    // A phone or tablet: the page takes keyboard focus (and so brings up the
+                    // on-screen keyboard) only when tapped, not on its own at startup.
+                    let coarse = web_sys::window().and_then(|w| w.match_media("(pointer: coarse)").ok().flatten()).is_some_and(|q| q.matches());
+                    if coarse {
+                        app.canvas.touch_device = true;
+                    }
                     Ok(Box::new(WebShell { app, inbox }))
                 }),
             )
@@ -192,9 +198,46 @@ fn accept_files_from_host(inbox: Inbox, ctx: egui::Context) -> Result<(), String
     Ok(())
 }
 
+/// Where this copy runs: the Android app loads the web app from its assets
+/// (`appassets.androidplatform.net`), the iOS app from files in its bundle (`file:`); anything else
+/// is a browser or an installed web app.
+fn platform() -> wordcraft_ui_egui::update::Platform {
+    use wordcraft_ui_egui::update::Platform;
+    let Some(loc) = web_sys::window().map(|w| w.location()) else { return Platform::Web };
+    if loc.host().is_ok_and(|h| h == "appassets.androidplatform.net") {
+        Platform::Android
+    } else if loc.protocol().is_ok_and(|p| p == "file:") {
+        Platform::Ios
+    } else {
+        Platform::Web
+    }
+}
+
+/// Look up the latest release and leave the answer in `slot` for the app.
+fn check_update(slot: wordcraft_ui_egui::update::UpdateSlot, ctx: egui::Context) {
+    use wordcraft_ui_egui::update::{LATEST_RELEASE_API, UpdateResult, release_from_json};
+    wasm_bindgen_futures::spawn_local(async move {
+        let answer = async {
+            let window = web_sys::window().ok_or("no window")?;
+            let resp = wasm_bindgen_futures::JsFuture::from(window.fetch_with_str(LATEST_RELEASE_API)).await.map_err(|e| format!("{e:?}"))?;
+            let resp: web_sys::Response = resp.dyn_into().map_err(|_| "not a response")?;
+            if !resp.ok() {
+                return Err(format!("HTTP {}", resp.status()));
+            }
+            let text = wasm_bindgen_futures::JsFuture::from(resp.text().map_err(|e| format!("{e:?}"))?).await.map_err(|e| format!("{e:?}"))?;
+            release_from_json(&text.as_string().unwrap_or_default(), platform())
+        }
+        .await;
+        *slot.lock().unwrap_or_else(|e| e.into_inner()) = UpdateResult::Done(answer);
+        ctx.request_repaint();
+    });
+}
+
 /// `dirty` is the flag the `beforeunload` guard reads ([`guard_unload`]).
 fn services(inbox: Inbox, ctx: egui::Context, dirty: Rc<Cell<bool>>) -> Services {
     let open_inbox = inbox.clone();
+    let update_slot = wordcraft_ui_egui::update::UpdateSlot::default();
+    let update_ctx = ctx.clone();
     Services {
         open_async: Some(Box::new(move |purpose: &str| {
             let inbox = open_inbox.clone();
@@ -227,6 +270,16 @@ fn services(inbox: Inbox, ctx: egui::Context, dirty: Rc<Cell<bool>>) -> Services
         on_dirty: Some(Box::new(move |d| dirty.set(d))),
         animations_enabled: Some(animations_enabled()),
         store_font: Some(Box::new(font_store::store)),
+        check_update: Some(Box::new({
+            let (slot, ctx) = (update_slot.clone(), update_ctx);
+            move || check_update(slot.clone(), ctx.clone())
+        })),
+        update_slot: Some(update_slot),
+        reload: Some(Box::new(|| {
+            if let Some(w) = web_sys::window() {
+                let _ = w.location().reload();
+            }
+        })),
         forget_font: Some(Box::new(font_store::forget)),
         ..Default::default()
     }

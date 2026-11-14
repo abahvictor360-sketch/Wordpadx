@@ -2044,3 +2044,13 @@
 	Convert PDF to Word…	Перетворити PDF на Word…
 	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Відкриває PDF як документ, який можна редагувати; Зберегти зберігає його як документ Word (.docx).
 	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Перетворено з PDF. Зберегти зберігає документ як документ Word (.docx); PDF не змінюється.
+	Check for\nUpdates	Перевірити\nоновлення
+	Wordpadx {version} is available.	Доступна версія Wordpadx {version}.
+	Reload to update	Перезавантажити для оновлення
+	Update	Оновити
+	What's new	Що нового
+	Later	Пізніше
+	Checking for updates…	Перевірка оновлень…
+	Wordpadx {version} is the latest version.	Wordpadx {version} — остання версія.
+	Couldn't check for updates. Check your internet connection and try again.	Не вдалося перевірити оновлення. Перевірте підключення до інтернету й повторіть спробу.
+	This version of Wordpadx can't check for updates. See the Releases page on GitHub.	Ця версія Wordpadx не може перевіряти оновлення. Відкрийте сторінку Releases на GitHub.

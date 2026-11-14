@@ -130,6 +130,8 @@ Ranked, to beta (detail and remaining milestones in [docs/roadmap.md](docs/roadm
 ## Progress log
 
 | Date | What landed |
+| 2026-11-14 | Update notifications: the web app (and so the Android and iOS apps) checks the latest GitHub release at start and every 6 h; a newer one shows a bar under the ribbon (Update downloads the APK on Android, opens the release page on iOS, reloads the web app; What's new; Later). Help › Check for Updates asks on demand. The web app's offline cache loads the page from the network first so a reload gets the new version; links open in the system browser on Android and iOS |
+| 2026-11-14 | Touch: a finger dragged on the page scrolls it (with momentum) instead of selecting text and bringing up the keyboard; a tap places the caret and shows the keyboard, a double tap selects the word; on touch screens the app no longer takes keyboard focus by itself (startup, opening a document) |
 | 2026-11-12 | Convert PDF to Word (`file.convertPdf`, File › Open › Convert PDF to Word…, opening a .pdf on any platform): text, headings by size, paragraphs across lines and pages, bullet lists, tables from aligned columns, bold/italic/font/size/colour and pictures; running headers, footers and page numbers dropped; saved as .docx beside the PDF. Opening documents from other apps on Android and iOS; new app icon |
 | 2026-10-14 | Responsive layout: Share, Editing and Comments keep their place at the end of the tab strip (the tabs used to run under them) and show as icons below 1100 pt; Print Layout zooms to Page Width when the page doesn't fit across the window at 100% and back once it does; the status bar drops the language below 760 pt and the zoom slider and Focus below 640 pt |
 | 2026-10-14 | Phones: a phone-sized window (narrower than 560 pt or shorter than 480 pt) switches Print Layout to Web Layout so text wraps to the screen, hides the rulers and shrinks the title and status bars; widening the window switches back. Web Layout now wraps to the window on every device, as in Word (it was fixed at 800 pt). The web app keeps clear of iPhone notches and home bars |
@@ -265,3 +267,5 @@ Ranked, to beta (detail and remaining milestones in [docs/roadmap.md](docs/roadm
 | 2026-10-14 | trivial | Progress log: phone layout and Web Layout wrapping to the window |
 | 2026-10-14 | trivial | Progress log: responsive tab strip, page fit and status bar |
 | 2026-11-12 | trivial | Progress log: Convert PDF to Word |
+| 2026-11-14 | trivial | Progress log: touch scrolling without the keyboard |
+| 2026-11-14 | trivial | Progress log: update notifications |

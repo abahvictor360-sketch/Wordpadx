@@ -2048,3 +2048,13 @@
 	Convert PDF to Word…	Convertir PDF a Word…
 	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Abre un PDF como documento editable; Guardar lo conserva como documento de Word (.docx).
 	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Convertido desde PDF. Guardar lo conserva como documento de Word (.docx); el PDF no cambia.
+	Check for\nUpdates	Buscar\nactualizaciones
+	Wordpadx {version} is available.	Wordpadx {version} está disponible.
+	Reload to update	Recargar para actualizar
+	Update	Actualizar
+	What's new	Novedades
+	Later	Más tarde
+	Checking for updates…	Buscando actualizaciones…
+	Wordpadx {version} is the latest version.	Wordpadx {version} es la última versión.
+	Couldn't check for updates. Check your internet connection and try again.	No se pudo buscar actualizaciones. Comprueba la conexión a internet e inténtalo de nuevo.
+	This version of Wordpadx can't check for updates. See the Releases page on GitHub.	Esta versión de Wordpadx no puede buscar actualizaciones. Consulta la página Releases en GitHub.
