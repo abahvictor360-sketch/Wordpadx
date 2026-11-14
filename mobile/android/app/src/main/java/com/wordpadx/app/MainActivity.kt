@@ -217,6 +217,21 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         webView.webViewClient = object : WebViewClient() {
+            // Links out of the app (an update's download, a hyperlink in a document) open in the
+            // system browser; only the app's own pages load here.
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                val uri = request?.url ?: return false
+                if (uri.host == "appassets.androidplatform.net") return false
+                if (uri.scheme != "http" && uri.scheme != "https" && uri.scheme != "mailto") return false
+                return try {
+                    startActivity(Intent(Intent.ACTION_VIEW, uri))
+                    true
+                } catch (e: Exception) {
+                    Log.w("Wordpadx", "No app to open $uri", e)
+                    true
+                }
+            }
+
             override fun shouldInterceptRequest(
                 view: WebView?,
                 request: WebResourceRequest?

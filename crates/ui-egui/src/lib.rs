@@ -62,6 +62,7 @@ pub mod table_pen;
 pub mod table_resize;
 pub mod theme;
 pub mod touch;
+pub mod update;
 pub mod widgets;
 pub mod window_geometry;
 pub mod wordart_menus;
@@ -116,6 +117,13 @@ pub struct Services {
     /// Web: keep a font the user added (stored file name, original bytes) for the next visit
     /// (#582). Desktop fonts are stored by the font database itself, in the app's font folder.
     pub store_font: Option<Box<dyn Fn(&str, &[u8])>>,
+    /// Look up the latest release and put it in `update_slot` ([`update`]); the web app, and so
+    /// the Android and iOS apps, has one. Without it the app never checks.
+    pub check_update: Option<Box<dyn Fn()>>,
+    /// Where `check_update` puts its answer.
+    pub update_slot: Option<update::UpdateSlot>,
+    /// Reload the app into a new version (the web app).
+    pub reload: Option<Box<dyn Fn()>>,
     /// Web: forget a stored font (its stored file name) once the user removes it.
     pub forget_font: Option<Box<dyn Fn(&str)>>,
 }
@@ -317,6 +325,8 @@ pub struct WordApp {
     /// File ▸ Options: load the installed CJK fallback font if no embedded face covers it.
     pub(crate) want_system_cjk: bool,
     fonts_frames: u32,
+    /// Update notifications ([`update`]).
+    pub(crate) update: update::UpdateUi,
     /// The window is phone-sized ([`PHONE_MAX_WIDTH`], [`PHONE_MAX_HEIGHT`]): compact chrome, no
     /// rulers, text wrapped to the screen.
     pub(crate) phone: bool,
@@ -414,6 +424,7 @@ impl WordApp {
             want_system_cjk: false,
             fonts_frames: 0,
             phone: false,
+            update: Default::default(),
             phone_reflowed: false,
             page_auto_fit: false,
             applied_theme: None,
@@ -895,6 +906,8 @@ impl WordApp {
                 self.pick_picture();
                 json!({"pending": self.change_picture_target.is_some()})
             }
+            // Help › Check for Updates: ask now; the answer shows in the update bar or status bar.
+            "ui.checkForUpdates" => json!({"checking": self.check_for_update(true)}),
             "ui.collapseRibbon" => {
                 self.ui.ribbon_collapsed = !self.ui.ribbon_collapsed;
                 json!({"collapsed": self.ui.ribbon_collapsed})
@@ -1137,6 +1150,11 @@ impl WordApp {
         let lang = i18n::Lang::from_pref(&self.ui.language);
         i18n::set_current(lang);
         options::sync(self);
+        self.update_tick(now_ms());
+        // Wake up for the first update check even if nothing else draws a frame.
+        if self.services.check_update.is_some() && self.update.first_check_pending() {
+            ctx.request_repaint_after(std::time::Duration::from_secs(5));
+        }
         // Chinese text wants the Chinese face before the Japanese one (one glyph style per line).
         // An installed CJK font is read only once CJK text is shown (#241): never for an English
         // interface that doesn't open the language list.
@@ -1316,6 +1334,7 @@ impl WordApp {
         } else {
             chrome::title_bar(self, ui);
             ribbon::show(self, ui);
+            update::bar(self, ui);
             chrome::status_bar(self, ui);
             panes::show(self, ui);
             egui::CentralPanel::default().frame(egui::Frame::NONE.fill(t.canvas)).show(ui, |ui| {

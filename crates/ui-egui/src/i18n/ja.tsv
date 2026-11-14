@@ -2032,3 +2032,13 @@
 	Convert PDF to Word…	PDF を Word に変換…
 	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	PDF を編集可能な文書として開きます。保存すると Word 文書 (.docx) として残ります。
 	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	PDF から変換しました。保存すると Word 文書 (.docx) として残ります。PDF は変更されません。
+	Check for\nUpdates	更新の\n確認
+	Wordpadx {version} is available.	Wordpadx {version} を利用できます。
+	Reload to update	再読み込みして更新
+	Update	更新
+	What's new	新機能
+	Later	後で
+	Checking for updates…	更新を確認しています…
+	Wordpadx {version} is the latest version.	Wordpadx {version} は最新バージョンです。
+	Couldn't check for updates. Check your internet connection and try again.	更新を確認できませんでした。インターネット接続を確認して、もう一度お試しください。
+	This version of Wordpadx can't check for updates. See the Releases page on GitHub.	このバージョンの Wordpadx は更新を確認できません。GitHub の Releases ページをご覧ください。

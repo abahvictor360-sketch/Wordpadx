@@ -2042,3 +2042,13 @@
 	Convert PDF to Word…	Pretvori PDF u Word…
 	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Otvara PDF kao dokument koji se može uređivati; Sačuvaj ga čuva kao Word dokument (.docx).
 	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Pretvoreno iz PDF-a. Sačuvaj ga čuva kao Word dokument (.docx); PDF se ne menja.
+	Check for\nUpdates	Proveri\nažuriranja
+	Wordpadx {version} is available.	Dostupan je Wordpadx {version}.
+	Reload to update	Ponovo učitaj radi ažuriranja
+	Update	Ažuriraj
+	What's new	Šta je novo
+	Later	Kasnije
+	Checking for updates…	Provera ažuriranja…
+	Wordpadx {version} is the latest version.	Wordpadx {version} je najnovija verzija.
+	Couldn't check for updates. Check your internet connection and try again.	Provera ažuriranja nije uspela. Proverite internet vezu i pokušajte ponovo.
+	This version of Wordpadx can't check for updates. See the Releases page on GitHub.	Ova verzija Wordpadx-a ne može da proverava ažuriranja. Pogledajte stranicu Releases na GitHub-u.

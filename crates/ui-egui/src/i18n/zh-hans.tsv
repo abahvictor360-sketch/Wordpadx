@@ -2044,3 +2044,13 @@
 	Convert PDF to Word…	将 PDF 转换为 Word…
 	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	将 PDF 作为可编辑文档打开；保存后存为 Word 文档 (.docx)。
 	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	已从 PDF 转换。保存后存为 Word 文档 (.docx)；PDF 不会更改。
+	Check for\nUpdates	检查\n更新
+	Wordpadx {version} is available.	Wordpadx {version} 已推出。
+	Reload to update	重新加载以更新
+	Update	更新
+	What's new	新功能
+	Later	以后
+	Checking for updates…	正在检查更新…
+	Wordpadx {version} is the latest version.	Wordpadx {version} 是最新版本。
+	Couldn't check for updates. Check your internet connection and try again.	无法检查更新。请检查网络连接后重试。
+	This version of Wordpadx can't check for updates. See the Releases page on GitHub.	此版本的 Wordpadx 无法检查更新。请查看 GitHub 上的 Releases 页面。

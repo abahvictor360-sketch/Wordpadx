@@ -2042,3 +2042,13 @@
 	Convert PDF to Word…	Teisenda PDF Wordiks…
 	Open a PDF as an editable document; Save keeps it as a Word document (.docx).	Avab PDF-i muudetava dokumendina; Salvesta hoiab selle Wordi dokumendina (.docx).
 	Converted from PDF. Save keeps it as a Word document (.docx); the PDF isn't changed.	Teisendatud PDF-ist. Salvesta hoiab selle Wordi dokumendina (.docx); PDF jääb muutmata.
+	Check for\nUpdates	Otsi\nvärskendusi
+	Wordpadx {version} is available.	Wordpadx {version} on saadaval.
+	Reload to update	Värskendamiseks laadi uuesti
+	Update	Värskenda
+	What's new	Mis on uut
+	Later	Hiljem
+	Checking for updates…	Värskenduste otsimine…
+	Wordpadx {version} is the latest version.	Wordpadx {version} on uusim versioon.
+	Couldn't check for updates. Check your internet connection and try again.	Värskendusi ei saanud otsida. Kontrolli internetiühendust ja proovi uuesti.
+	This version of Wordpadx can't check for updates. See the Releases page on GitHub.	See Wordpadxi versioon ei saa värskendusi otsida. Vaata GitHubi lehte Releases.
